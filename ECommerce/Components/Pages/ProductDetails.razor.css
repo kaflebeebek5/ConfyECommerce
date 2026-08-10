@@ -972,4 +972,27 @@
 article .content, .px-4 {
     padding: 0px !important
 }
+.pd-back-home {
+    margin-bottom: 20px;
+}
+
+.pd-home-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    border: none;
+    background: transparent;
+    color: #062847;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+    .pd-home-btn:hover {
+        color: #0a5a9c;
+    }
+
+    .pd-home-btn .rzi {
+        font-size: 22px;
+    }
 

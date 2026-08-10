@@ -95,8 +95,17 @@ else
             <span class="pd-crumb-current">
                 @Product.Name
             </span>
+            @* <div class="pd-back-home">
+                <button type="button"
+                        class="pd-home-btn"
+                        @onclick="GoHome">
+                    <RadzenIcon Icon="arrow_back" />
+                    <span>Back to Home</span>
+                </button>
+            </div> *@
 
         </div>
+       
 
 
         <!-- =====================================================
@@ -794,6 +803,10 @@ else
         AddToCart();
 
         Nav.NavigateTo("/checkout");
+    }
+    private void GoHome()
+    {
+        Nav.NavigateTo("/");
     }
 
 

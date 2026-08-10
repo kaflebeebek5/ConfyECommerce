@@ -245,3 +245,11 @@
         grid-template-columns: 1fr;
     }
 }
+.product-dialog .rz-dialog-titlebar {
+    background-color: #062847 !important;
+    padding-bottom: 20px !important;
+}
+
+.product-dialog .rz-dialog-title {
+    color: white !important;
+}

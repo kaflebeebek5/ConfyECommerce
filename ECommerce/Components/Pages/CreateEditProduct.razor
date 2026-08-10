@@ -121,9 +121,20 @@
     private async Task OpenForm(Product? product)
     {
         var result = await DialogService.OpenAsync<ProductFormDialog>(
-            product is null ? "Add Product" : "Edit Product",
-            new Dictionary<string, object> { { "Existing", product } },
-            new DialogOptions { Width = "600px",Height="500px",Draggable  = true,Resizable = true, CloseDialogOnOverlayClick = false }
+          product is null ? "Add Product" : "Edit Product",
+          new Dictionary<string, object>
+          {
+            { "Existing", product }
+          },
+          new DialogOptions
+          {
+              Width = "789px",
+              Height = "549px",
+              Draggable = true,
+              Resizable = true,
+              CloseDialogOnOverlayClick = false,
+              CssClass = "product-dialog"
+          }
         );
 
         // Dialog returns true when saved successfully
