@@ -1,0 +1,247 @@
+﻿.pf-form {
+    --brand: #E8590C;
+    --ink: #1A1A1A;
+    --muted: #767676;
+    --border: #E4E4E4;
+    --bg: #F7F7F8;
+    --danger: #D0392E;
+    font-family: 'Inter', -apple-system, sans-serif;
+    color: var(--ink);
+    padding: 4px 4px 8px;
+}
+
+/* ---------- Image gallery ---------- */
+.pf-gallery-section {
+    margin-bottom: 20px;
+}
+
+.pf-gallery-label {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.pf-gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(84px, 1fr));
+    gap: 10px;
+}
+
+.pf-gallery-item {
+    position: relative;
+    aspect-ratio: 1/1;
+    border-radius: 6px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    background: var(--bg);
+}
+
+    .pf-gallery-item img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+    }
+
+.pf-gallery-item-existing {
+    opacity: 0.92;
+}
+
+.pf-gallery-remove {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(0,0,0,0.65);
+    color: #fff;
+    font-size: 0.9rem;
+    line-height: 1;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+    .pf-gallery-remove:hover {
+        background: var(--danger);
+    }
+
+.pf-gallery-cover-tag, .pf-gallery-existing-tag {
+    position: absolute;
+    bottom: 4px;
+    left: 4px;
+    font-size: 0.6rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    padding: 2px 6px;
+    border-radius: 2px;
+    color: #fff;
+}
+
+.pf-gallery-cover-tag {
+    background: var(--brand);
+}
+
+.pf-gallery-existing-tag {
+    background: #4A4A4A;
+}
+
+.pf-gallery-add {
+    aspect-ratio: 1/1;
+    border: 1.5px dashed var(--border);
+    border-radius: 6px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    color: var(--muted);
+    font-size: 0.7rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: border-color .15s ease, color .15s ease;
+    background: #fff;
+}
+
+    .pf-gallery-add:hover {
+        border-color: var(--brand);
+        color: var(--brand);
+    }
+
+.pf-gallery-hint {
+    font-size: 0.74rem;
+    color: var(--muted);
+    margin-top: 8px;
+}
+
+.pf-file-input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+    overflow: hidden;
+}
+
+/* ---------- Fields ---------- */
+.pf-fields {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.pf-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+}
+
+.pf-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+    .pf-field label {
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: var(--ink);
+    }
+
+.pf-hint {
+    font-weight: 400;
+    color: var(--muted);
+    font-size: 0.75rem;
+}
+
+.pf-required {
+    color: var(--danger);
+}
+
+.pf-input {
+    padding: 9px 12px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    font-size: 0.87rem;
+    font-family: inherit;
+    outline: none;
+    width: 100%;
+}
+
+    .pf-input:focus {
+        border-color: var(--brand);
+    }
+
+.pf-input-error {
+    border-color: var(--danger);
+}
+
+.pf-textarea {
+    resize: vertical;
+    min-height: 64px;
+}
+
+.pf-field-error {
+    font-size: 0.76rem;
+    color: var(--danger);
+}
+
+.pf-save-error {
+    margin-top: 14px;
+    padding: 8px 12px;
+    background: #FDEDEC;
+    border-radius: 4px;
+}
+
+/* ---------- Actions ---------- */
+.pf-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 22px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+}
+
+.pf-btn-cancel, .pf-btn-save {
+    padding: 10px 20px;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+}
+
+.pf-btn-cancel {
+    background: #fff;
+    border: 1px solid var(--border);
+    color: var(--ink);
+}
+
+    .pf-btn-cancel:hover:not(:disabled) {
+        background: var(--bg);
+    }
+
+.pf-btn-save {
+    background: var(--brand);
+    color: #fff;
+}
+
+    .pf-btn-save:hover:not(:disabled) {
+        background: #C6480A;
+    }
+
+    .pf-btn-cancel:disabled, .pf-btn-save:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+    }
+
+@media (max-width: 480px) {
+    .pf-row {
+        grid-template-columns: 1fr;
+    }
+}

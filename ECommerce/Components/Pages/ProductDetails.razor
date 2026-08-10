@@ -1,0 +1,821 @@
+﻿@page "/product/{Id:int}"
+
+@using ECommerce.Entities
+@inject ECommerce.Services.IProductService ProductService
+@inject NavigationManager Nav
+<header class="mk-topbar">
+    <div class="mk-topbar-inner">
+
+        <!-- Logo -->
+        <div class="mk-logo">
+            <span class="mk-logo-icon">
+                <svg viewBox="0 0 32 32"
+                     width="25"
+                     height="25"
+                     fill="none">
+
+                    <circle cx="16" cy="5" r="4" fill="currentColor" />
+                    <circle cx="6" cy="11" r="4" fill="currentColor" />
+                    <circle cx="26" cy="11" r="4" fill="currentColor" />
+                    <circle cx="9" cy="23" r="4" fill="currentColor" />
+                    <circle cx="23" cy="23" r="4" fill="currentColor" />
+                    <circle cx="16" cy="16" r="4" fill="currentColor" />
+
+                </svg>
+            </span>
+
+            <span class="mk-logo-text">
+                Confy Wear
+            </span>
+        </div>
+    </div>
+</header>
+
+@if (Loading)
+{
+    <div class="pd-page">
+        <div class="pd-loading">
+            Loading...
+        </div>
+    </div>
+}
+else if (Product is null)
+{
+    <div class="pd-page">
+
+        <div class="pd-empty">
+
+            <div class="pd-empty-title">
+                Product not found.
+            </div>
+
+            <button class="pd-back-btn"
+                    @onclick='@(() => Nav.NavigateTo("/"))'>
+                Back to Shop
+            </button>
+
+        </div>
+
+    </div>
+}
+else
+{
+    var inStock = Product.StockQuantity > 0;
+    var lowStock = Product.StockQuantity > 0 &&
+                   Product.StockQuantity <= 5;
+
+    <div class="pd-page">
+
+        <!-- =====================================================
+             BREADCRUMB
+             ===================================================== -->
+
+        <div class="pd-crumb">
+
+            <span class="pd-crumb-link"
+                  @onclick='@(() => Nav.NavigateTo("/"))'>
+                Shop
+            </span>
+
+            <span class="pd-crumb-separator">
+                /
+            </span>
+
+            @if (!string.IsNullOrWhiteSpace(Product.Brand))
+            {
+                <span class="pd-crumb-brand">
+                    @Product.Brand
+                </span>
+
+                <span class="pd-crumb-separator">
+                    /
+                </span>
+            }
+
+            <span class="pd-crumb-current">
+                @Product.Name
+            </span>
+
+        </div>
+
+
+        <!-- =====================================================
+             MAIN PRODUCT
+             ===================================================== -->
+
+        <div class="pd-product-card">
+
+            <!-- =================================================
+                 LEFT SIDE - IMAGE
+                 ================================================= -->
+
+            <div class="pd-gallery">
+                <div class="pd-main-image">
+
+                    @if (productImages != null && productImages.Count > 0)
+                    {
+                        var selectedImage = productImages[selectedImageIndex];
+
+                        @if (!string.IsNullOrWhiteSpace(selectedImage.ImagePath))
+                        {
+                            <img src="@selectedImage.ImagePath"
+                                 alt="Product image" />
+                        }
+                        else
+                        {
+                            <svg viewBox="0 0 64 64"
+                                 width="60"
+                                 height="60"
+                                 fill="none"
+                                 stroke="currentColor"
+                                 stroke-width="1.5">
+
+                                <rect x="8" y="8" width="48" height="48" rx="4" />
+                                <circle cx="22" cy="24" r="5" />
+                                <path d="M8 44l14-14 10 10 8-8 16 16" />
+
+                            </svg>
+                        }
+                    }
+                    else
+                    {
+                        <svg viewBox="0 0 64 64"
+                             width="60"
+                             height="60"
+                             fill="none"
+                             stroke="currentColor"
+                             stroke-width="1.5">
+
+                            <rect x="8" y="8" width="48" height="48" rx="4" />
+                            <circle cx="22" cy="24" r="5" />
+                            <path d="M8 44l14-14 10 10 8-8 16 16" />
+
+                        </svg>
+                    }
+
+                </div>
+               @*  <div class="pd-main-image">
+
+                    @if (!string.IsNullOrWhiteSpace(Product.ImagePath))
+                    {
+                        <img src="@Product.ImagePath"
+                             alt="@Product.Name"
+                             class="@(!inStock ? "pd-img-muted" : "")" />
+                    }
+                    else
+                    {
+                        <div class="pd-img-fallback">
+
+                            <svg viewBox="0 0 64 64"
+                                 width="60"
+                                 height="60"
+                                 fill="none"
+                                 stroke="currentColor"
+                                 stroke-width="1.5">
+
+                                <rect x="8"
+                                      y="8"
+                                      width="48"
+                                      height="48"
+                                      rx="4" />
+
+                                <circle cx="22"
+                                        cy="24"
+                                        r="5" />
+
+                                <path d="M8 44l14-14 10 10 8-8 16 16" />
+
+                            </svg>
+
+                        </div>
+                    }
+
+                </div> *@
+
+
+                <!-- =================================================
+                     THUMBNAILS
+                     ================================================= -->
+
+                <div class="pd-thumbnails">
+
+                    <!-- Previous -->
+                    <button class="pd-gallery-arrow"
+                            type="button">
+                        ‹
+                    </button>
+
+
+                    @for (int i = 0; i < productImages.Count; i++)
+                    {
+                        var index = i;
+                        var item = productImages[index];
+
+                        <button type="button"
+                                class="pd-thumbnail @(selectedImageIndex == index ? "pd-thumbnail-active" : "")"
+                                @onclick="() => SelectImage(index)">
+
+                            @if (!string.IsNullOrWhiteSpace(item.ImagePath))
+                            {
+                                <img src="@item.ImagePath"
+                                     alt="Product image" />
+                            }
+
+                        </button>
+                    }
+
+
+                    <!-- Next -->
+                    <button class="pd-gallery-arrow"
+                            type="button">
+                        ›
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <!-- =================================================
+                 RIGHT SIDE - PRODUCT INFORMATION
+                 ================================================= -->
+
+            <div class="pd-info">
+
+                <!-- Brand -->
+
+                @if (!string.IsNullOrWhiteSpace(Product.Brand))
+                {
+                    <div class="pd-brand">
+                        @Product.Brand.ToUpper()
+                    </div>
+                }
+
+
+                <!-- Name -->
+
+                <h1 class="pd-name">
+                    @Product.Name
+                </h1>
+
+
+                <!-- Price -->
+
+                <div class="pd-price">
+                    Rs.@Product.Price.ToString("N0")
+                </div>
+
+
+                <!-- Stock -->
+
+                <div class="@($"pd-stock-badge {(inStock ? (lowStock ? "pd-stock-low" : "pd-stock-in") : "pd-stock-out")}")">
+
+                    <span class="pd-stock-dot"></span>
+
+                    @(inStock
+                        ? (lowStock
+                            ? $"Only {Product.StockQuantity} left"
+                            : "In Stock")
+                        : "Out of Stock")
+
+                </div>
+
+
+                <div class="pd-divider"></div>
+
+
+                <!-- =================================================
+                     SIZE
+                     ================================================= -->
+
+                @if (Sizes.Any())
+                {
+                    <div class="pd-field">
+
+                        <div class="pd-field-label">
+                            SIZE
+                        </div>
+
+                        <div class="pd-pill-row">
+
+                            @foreach (var size in Sizes)
+                            {
+                                <button type="button"
+                                        class="@($"pd-pill {(size == SelectedSize ? "pd-pill-active" : "")}")"
+                                        @onclick="@(() => SelectedSize = size)">
+
+                                    @size
+
+                                </button>
+                            }
+
+                        </div>
+
+                    </div>
+                }
+
+
+                <!-- =================================================
+                     COLOR
+                     ================================================= -->
+
+                @if (Colors.Any())
+                {
+                    <div class="pd-field">
+
+                        <div class="pd-field-label">
+                            COLOR
+                        </div>
+
+                        <div class="pd-color-row">
+
+                            @foreach (var item in Colors)
+                            {
+                                <button type="button"
+                                        class="@($"pd-color-option")"
+                                        >
+
+                                    <span class="pd-swatch"
+                                          style="background:@ColorToHex(item)">
+                                    </span>
+
+                                    <span class="pd-color-name">
+                                        @item
+                                    </span>
+
+                                </button>
+                            }
+
+                        </div>
+
+                    </div>
+                }
+
+
+                <!-- =================================================
+                     QUANTITY
+                     ================================================= -->
+
+                <div class="pd-field">
+
+                    <div class="pd-field-label">
+                        QUANTITY
+                    </div>
+
+                    <div class="pd-qty-row">
+
+                        <button class="pd-qty-btn"
+                                @onclick="Decrement"
+                                disabled="@(Quantity <= 1)">
+                            −
+                        </button>
+
+                        <span class="pd-qty-value">
+                            @Quantity
+                        </span>
+
+                        <button class="pd-qty-btn"
+                                @onclick="Increment"
+                                disabled="@(Quantity >= Product.StockQuantity)">
+                            +
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <!-- =================================================
+                     ACTION BUTTONS
+                     ================================================= -->
+
+                <div class="pd-actions">
+
+                    <button class="pd-btn-primary"
+                            disabled="@(!inStock)"
+                            @onclick="AddToCart">
+
+                        <span class="pd-btn-icon">
+                            <svg viewBox="0 0 24 24"
+                                 width="17"
+                                 height="17"
+                                 fill="none"
+                                 stroke="currentColor"
+                                 stroke-width="1.8">
+
+                                <circle cx="9"
+                                        cy="21"
+                                        r="1" />
+
+                                <circle cx="20"
+                                        cy="21"
+                                        r="1" />
+
+                                <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
+
+                            </svg>
+                        </span>
+
+                        @(inStock ? "Add to Cart" : "Notify Me")
+
+                    </button>
+
+
+                    <button class="pd-btn-secondary"
+                            disabled="@(!inStock)"
+                            @onclick="BuyNow">
+
+                        <span class="pd-btn-icon">
+                            ⚡
+                        </span>
+
+                        Buy Now
+
+                    </button>
+
+                </div>
+
+
+                @if (AddedMessage is not null)
+                {
+                    <div class="pd-added-msg">
+                        @AddedMessage
+                    </div>
+                }
+
+            </div>
+
+        </div>
+
+
+        <!-- =====================================================
+             PRODUCT DETAILS
+             ===================================================== -->
+
+        <div class="pd-details-card">
+
+            <!-- LEFT - SPECS -->
+
+            <div class="pd-spec-section">
+
+                <h2 class="pd-section-title">
+                    Product Details
+                </h2>
+
+
+                @if (!string.IsNullOrWhiteSpace(Product.Brand))
+                {
+                    <div class="pd-spec-row">
+
+                        <div class="pd-spec-label">
+                            <span class="pd-spec-icon">◉</span>
+                            Brand
+                        </div>
+
+                        <div class="pd-spec-value">
+                            @Product.Brand
+                        </div>
+
+                    </div>
+                }
+
+
+                @if (!string.IsNullOrWhiteSpace(Product.Color))
+                {
+                    <div class="pd-spec-row">
+
+                        <div class="pd-spec-label">
+                            <span class="pd-spec-icon">◇</span>
+                            Color
+                        </div>
+
+                        <div class="pd-spec-value pd-spec-colors">
+
+                            @foreach (var color in Colors)
+                            {
+                                <span class="pd-mini-swatch"
+                                      style="background:@ColorToHex(color)">
+                                </span>
+                            }
+
+                            @Product.Color
+
+                        </div>
+
+                    </div>
+                }
+
+
+                @if (!string.IsNullOrWhiteSpace(Product.Size))
+                {
+                    <div class="pd-spec-row">
+
+                        <div class="pd-spec-label">
+                            <span class="pd-spec-icon">◇</span>
+                            Available Sizes
+                        </div>
+
+                        <div class="pd-spec-value">
+                            @Product.Size
+                        </div>
+
+                    </div>
+                }
+
+
+                <div class="pd-spec-row">
+
+                    <div class="pd-spec-label">
+                        <span class="pd-spec-icon">▣</span>
+                        Stock
+                    </div>
+
+                    <div class="pd-spec-value">
+                        @Product.StockQuantity units
+                    </div>
+
+                </div>
+
+
+                <div class="pd-spec-row">
+
+                    <div class="pd-spec-label">
+                        <span class="pd-spec-icon">▣</span>
+                        Listed
+                    </div>
+
+                    <div class="pd-spec-value">
+                        @Product.CreatedAt.ToString("MMM d, yyyy")
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- RIGHT - DESCRIPTION + FEATURES -->
+
+            <div class="pd-description-section">
+
+                <div class="pd-description">
+
+                    @if (!string.IsNullOrWhiteSpace(Product.Description))
+                    {
+                        <p>
+                            @Product.Description
+                        </p>
+                    }
+                    else
+                    {
+                        <p>
+                            Step into style and comfort with
+                            the @Product.Name by @Product.Brand.
+                        </p>
+
+                        <p>
+                            Designed with premium materials and
+                            a sleek finish, this product is perfect
+                            for any occasion.
+                        </p>
+                    }
+
+                </div>
+
+
+                <!-- FEATURES -->
+
+                <div class="pd-features">
+
+                    <div class="pd-feature">
+
+                        <div class="pd-feature-icon">
+                            ♡
+                        </div>
+
+                        <div class="pd-feature-title">
+                            Premium
+                        </div>
+
+                        <div class="pd-feature-text">
+                            Quality
+                        </div>
+
+                    </div>
+
+
+                    <div class="pd-feature">
+
+                        <div class="pd-feature-icon">
+                            ☺
+                        </div>
+
+                        <div class="pd-feature-title">
+                            Comfort
+                        </div>
+
+                        <div class="pd-feature-text">
+                            Fit
+                        </div>
+
+                    </div>
+
+
+                    <div class="pd-feature">
+
+                        <div class="pd-feature-icon">
+                            ♧
+                        </div>
+
+                        <div class="pd-feature-title">
+                            Durable
+                        </div>
+
+                        <div class="pd-feature-text">
+                            Material
+                        </div>
+
+                    </div>
+
+
+                    <div class="pd-feature">
+
+                        <div class="pd-feature-icon">
+                            ◇
+                        </div>
+
+                        <div class="pd-feature-title">
+                            Lightweight
+                        </div>
+
+                        <div class="pd-feature-text">
+                            Design
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+}
+
+
+@code {
+
+    [Parameter]
+    public int Id { get; set; }
+    private int selectedImageIndex = 0;
+
+    
+
+    private Product? Product;
+
+    private bool Loading = true;
+    private List<ECommerce.ViewModel.ProductImages> productImages = new();
+
+    private string[] Sizes =
+        Array.Empty<string>();
+
+    private string[] Colors =
+        Array.Empty<string>();
+
+
+    private string? SelectedSize;
+
+    private string? SelectedColor;
+
+
+    private int Quantity = 1;
+
+    private string? AddedMessage;
+
+
+    protected override async Task OnParametersSetAsync()
+    {
+        Loading = true;
+
+        AddedMessage = null;
+
+        Quantity = 1;
+
+        SelectedSize = null;
+
+        SelectedColor = null;
+
+
+        var all =
+            await ProductService.GetAllAsync();
+
+
+        Product =
+            all.FirstOrDefault(p => p.Id == Id);
+        productImages = await ProductService.GetByIdAsync(Id);
+        selectedImageIndex = 0;
+
+
+        if (Product is not null)
+        {
+            if (!string.IsNullOrWhiteSpace(Product.Size))
+            {
+                Sizes =
+                    Product.Size.Split(
+                        new[] { ',', '-' },
+                        StringSplitOptions.TrimEntries |
+                        StringSplitOptions.RemoveEmptyEntries);
+
+                if (Sizes.Any())
+                {
+                    SelectedSize = Sizes.First();
+                }
+            }
+
+
+            if (!string.IsNullOrWhiteSpace(Product.Color))
+            {
+                Colors =
+                    Product.Color.Split(
+                        new[] { ',', '-' },
+                        StringSplitOptions.TrimEntries |
+                        StringSplitOptions.RemoveEmptyEntries);
+
+                if (Colors.Any())
+                {
+                    SelectedColor = Colors.First();
+                }
+            }
+        }
+
+
+        Loading = false;
+    }
+
+
+    private void Increment()
+    {
+        if (Product is not null &&
+            Quantity < Product.StockQuantity)
+        {
+            Quantity++;
+        }
+    }
+    private void SelectImage(int index)
+    {
+        if (productImages == null ||
+            index < 0 ||
+            index >= productImages.Count)
+        {
+            return;
+        }
+
+        selectedImageIndex = index;
+    }
+
+    private void Decrement()
+    {
+        if (Quantity > 1)
+        {
+            Quantity--;
+        }
+    }
+
+
+    private void AddToCart()
+    {
+        AddedMessage =
+            $"Added {Quantity} × {Product?.Name} to cart.";
+    }
+
+
+    private void BuyNow()
+    {
+        AddToCart();
+
+        Nav.NavigateTo("/checkout");
+    }
+
+
+    private static string ColorToHex(string color)
+    {
+        return color.Trim().ToLowerInvariant() switch
+        {
+            "blue" => "#28548A",
+            "navy" => "#082B4C",
+            "tan" => "#C8A165",
+            "olive" => "#5C6B3F",
+            "rust" => "#C1440E",
+            "grey" => "#8A8272",
+            "gray" => "#8A8272",
+            "black" => "#171717",
+            "brown" => "#6B4A2E",
+            "white" => "#F5F5F5",
+            "red" => "#D93025",
+            "green" => "#2E9E5B",
+            "yellow" => "#E4B72C",
+            _ => "#B08D57"
+        };
+    }
+
+}

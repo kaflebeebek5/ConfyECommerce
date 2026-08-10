@@ -1,0 +1,58 @@
+﻿@page "/login"
+@inject NavigationManager Nav
+@inject IHttpContextAccessor HttpContextAccessor
+@inject NotificationService NotificationService
+
+<RadzenStack AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center" Style="height:80vh;">
+    <RadzenCard Style="width:350px;padding:2rem;">
+        <RadzenText TextStyle="TextStyle.H5" class="rz-mb-4" TextAlign="TextAlign.Center">
+            Admin Login
+        </RadzenText>
+
+        <RadzenTemplateForm TItem="LoginModel" Data="@model" Submit="@HandleLogin">
+            <RadzenStack Gap="1rem">
+                <RadzenFormField Text="Username" Style="width:100%;">
+                    <RadzenTextBox @bind-Value="model.Username" Name="Username" />
+                </RadzenFormField>
+
+                <RadzenFormField Text="Password" Style="width:100%;">
+                    <RadzenPassword @bind-Value="model.Password" Name="Password" />
+                </RadzenFormField>
+
+                <RadzenButton ButtonType="ButtonType.Submit" Text="Login" Icon="login"
+                              ButtonStyle="ButtonStyle.Primary" class="rz-w-100" />
+            </RadzenStack>
+        </RadzenTemplateForm>
+    </RadzenCard>
+</RadzenStack>
+
+@code {
+    private LoginModel model = new();
+    private const string AdminUser = "admin";
+    private const string AdminPass = "ChangeMe123!";
+
+    private async Task HandleLogin()
+    {
+        if (model.Username == AdminUser && model.Password == AdminPass)
+        {
+            var claims = new List<Claim> { new(ClaimTypes.Name, AdminUser) };
+            var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+            var principal = new ClaimsPrincipal(identity);
+
+            await HttpContextAccessor.HttpContext!.SignInAsync(
+                CookieAuthenticationDefaults.AuthenticationScheme, principal);
+
+            Nav.NavigateTo("/", forceLoad: true);
+        }
+        else
+        {
+            NotificationService.Notify(NotificationSeverity.Error, "Login Failed", "Invalid credentials");
+        }
+    }
+
+    public class LoginModel
+    {
+        public string Username { get; set; } = "";
+        public string Password { get; set; } = "";
+    }
+}

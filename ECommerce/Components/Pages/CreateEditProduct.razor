@@ -1,0 +1,160 @@
+﻿@page "/admin/products"
+@using ECommerce.Entities
+@using ECommerce.ViewModel
+@using ECommerce.Services
+@inject IProductService ProductService
+@inject DialogService DialogService
+@inject NotificationService NotificationService
+
+<div class="ap-page">
+
+    <div class="ap-header">
+        <div>
+            <h1 class="ap-title">Products</h1>
+            <p class="ap-subtitle">@products.Count product@(products.Count == 1 ? "" : "s") in catalog</p>
+        </div>
+        <RadzenButton Text="+ Add Product" Click="@(() => OpenForm(null))" class="ap-add-btn" />
+    </div>
+
+    <div class="ap-toolbar">
+        <input class="ap-search" placeholder="Search by name or brand..."
+               @bind="SearchTerm" @bind:event="oninput" />
+    </div>
+
+    @if (Loading)
+    {
+        <div class="ap-loading">Loading products…</div>
+    }
+    else
+    {
+        <div class="ap-table-wrap">
+            <table class="ap-table">
+                <thead>
+                    <tr>
+                        <th class="ap-col-img"></th>
+                        <th>Name</th>
+                        <th>Brand</th>
+                        <th>Price</th>
+                        <th>Stock</th>
+                        <th>Size</th>
+                        <th>Color</th>
+                        <th class="ap-col-actions">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var p in FilteredProducts)
+                    {
+                        <tr>
+                            <td class="ap-col-img">
+                                @if (!string.IsNullOrWhiteSpace(p.ImagePath))
+                                {
+                                    <img src="@p.ImagePath" alt="@p.Name" class="ap-thumb" />
+                                }
+                                else
+                                {
+                                    <div class="ap-thumb ap-thumb-empty">—</div>
+                                }
+                            </td>
+                            <td class="ap-name-cell">@p.Name</td>
+                            <td>@p.Brand</td>
+                            <td>Rs.@p.Price.ToString("N0")</td>
+                            <td>
+                                <span class="@("ap-stock-pill " + (p.StockQuantity == 0 ? "ap-stock-zero" : p.StockQuantity <= 5 ? "ap-stock-low" : "ap-stock-ok"))">
+                                    @p.StockQuantity
+                                </span>
+                            </td>
+                            <td class="ap-muted">@p.Size</td>
+                            <td class="ap-muted">@p.Color</td>
+                            <td class="ap-col-actions">
+                                <button class="ap-icon-btn" title="Edit" @onclick="@(() => OpenForm(p))">
+                                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M12 20h9" />
+                                        <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z" />
+                                    </svg>
+                                </button>
+                                <button class="ap-icon-btn ap-icon-btn-danger" title="Delete" @onclick="@(() => ConfirmDelete(p))">
+                                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                                        <polyline points="3 6 5 6 21 6" />
+                                        <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
+                                        <path d="M10 11v6M14 11v6" />
+                                    </svg>
+                                </button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+            @if (!FilteredProducts.Any())
+            {
+                <div class="ap-empty">No products found.</div>
+            }
+        </div>
+    }
+
+</div>
+
+@code {
+    private List<Product> products = new();
+    private bool Loading = true;
+    private string SearchTerm = "";
+
+    private IEnumerable<Product> FilteredProducts =>
+        string.IsNullOrWhiteSpace(SearchTerm)
+            ? products
+            : products.Where(p =>
+                p.Name.Contains(SearchTerm, StringComparison.OrdinalIgnoreCase) ||
+                p.Brand.Contains(SearchTerm, StringComparison.OrdinalIgnoreCase));
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadProducts();
+    }
+
+    private async Task LoadProducts()
+    {
+        Loading = true;
+        products = await ProductService.GetAllAsync();
+        Loading = false;
+    }
+
+    private async Task OpenForm(Product? product)
+    {
+        var result = await DialogService.OpenAsync<ProductFormDialog>(
+            product is null ? "Add Product" : "Edit Product",
+            new Dictionary<string, object> { { "Existing", product } },
+            new DialogOptions { Width = "600px",Height="500px",Draggable  = true,Resizable = true, CloseDialogOnOverlayClick = false }
+        );
+
+        // Dialog returns true when saved successfully
+        if (result is true)
+        {
+            await LoadProducts();
+            NotificationService.Notify(NotificationSeverity.Success,
+                product is null ? "Product added" : "Product updated");
+        }
+    }
+
+    private async Task ConfirmDelete(Product p)
+    {
+        var confirmed = await DialogService.Confirm(
+            $"Delete \"{p.Name}\"? This cannot be undone.",
+            "Delete Product",
+            new ConfirmOptions { OkButtonText = "Delete", CancelButtonText = "Cancel" }
+        );
+
+        if (confirmed == true)
+        {
+            var ok = await ProductService.DeleteAsync(p.Id);
+            if (ok)
+            {
+                await LoadProducts();
+                NotificationService.Notify(NotificationSeverity.Success, "Product deleted");
+            }
+            else
+            {
+                NotificationService.Notify(NotificationSeverity.Error, "Failed to delete product");
+            }
+        }
+    }
+}
