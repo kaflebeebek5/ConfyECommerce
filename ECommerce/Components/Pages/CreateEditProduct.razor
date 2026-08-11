@@ -5,7 +5,33 @@
 @inject IProductService ProductService
 @inject DialogService DialogService
 @inject NotificationService NotificationService
+<header class="mk-topbar">
+    <div class="mk-topbar-inner">
 
+        <!-- Logo -->
+        <div class="mk-logo">
+            <span class="mk-logo-icon">
+                <svg viewBox="0 0 32 32"
+                     width="25"
+                     height="25"
+                     fill="none">
+
+                    <circle cx="16" cy="5" r="4" fill="currentColor" />
+                    <circle cx="6" cy="11" r="4" fill="currentColor" />
+                    <circle cx="26" cy="11" r="4" fill="currentColor" />
+                    <circle cx="9" cy="23" r="4" fill="currentColor" />
+                    <circle cx="23" cy="23" r="4" fill="currentColor" />
+                    <circle cx="16" cy="16" r="4" fill="currentColor" />
+
+                </svg>
+            </span>
+
+            <span class="mk-logo-text">
+                Confy Wear
+            </span>
+        </div>
+    </div>
+</header>
 <div class="ap-page">
 
     <div class="ap-header">
@@ -13,12 +39,13 @@
             <h1 class="ap-title">Products</h1>
             <p class="ap-subtitle">@products.Count product@(products.Count == 1 ? "" : "s") in catalog</p>
         </div>
-        <RadzenButton Text="+ Add Product" Click="@(() => OpenForm(null))" class="ap-add-btn" />
+        
     </div>
 
     <div class="ap-toolbar">
         <input class="ap-search" placeholder="Search by name or brand..."
                @bind="SearchTerm" @bind:event="oninput" />
+        <RadzenButton Text="+ Add Product" Click="@(() => OpenForm(null))" class="ap-add-btn" Style="background-color:#062847 !important" />
     </div>
 
     @if (Loading)
@@ -55,16 +82,23 @@
                                     <div class="ap-thumb ap-thumb-empty">—</div>
                                 }
                             </td>
-                            <td class="ap-name-cell">@p.Name</td>
-                            <td>@p.Brand</td>
-                            <td>Rs.@p.Price.ToString("N0")</td>
+                            <td>
+                                <div class="ap-name-cell">@p.Name</div>
+                                <div class="ap-sku">SKU-@p.Id.ToString("D4")</div>
+                            </td>
+                            <td><span class="ap-brand-tag">@p.Brand</span></td>
+                            <td class="ap-price">Rs.@p.Price.ToString("N0")</td>
                             <td>
                                 <span class="@("ap-stock-pill " + (p.StockQuantity == 0 ? "ap-stock-zero" : p.StockQuantity <= 5 ? "ap-stock-low" : "ap-stock-ok"))">
-                                    @p.StockQuantity
+                                    <span class="ap-dot"></span>@p.StockQuantity
                                 </span>
                             </td>
                             <td class="ap-muted">@p.Size</td>
-                            <td class="ap-muted">@p.Color</td>
+                            <td>
+                                <span class="ap-color-swatch">
+                                    <span class="ap-swatch-dot" style="background:@ColorToHex(p.Color)"></span>@p.Color
+                                </span>
+                            </td>
                             <td class="ap-col-actions">
                                 <button class="ap-icon-btn" title="Edit" @onclick="@(() => OpenForm(p))">
                                     <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
@@ -167,5 +201,25 @@
                 NotificationService.Notify(NotificationSeverity.Error, "Failed to delete product");
             }
         }
+    }
+    private static string ColorToHex(string color)
+    {
+        return color.Trim().ToLowerInvariant() switch
+        {
+            "blue" => "#28548A",
+            "navy" => "#082B4C",
+            "tan" => "#C8A165",
+            "olive" => "#5C6B3F",
+            "rust" => "#C1440E",
+            "grey" => "#8A8272",
+            "gray" => "#8A8272",
+            "black" => "#171717",
+            "brown" => "#6B4A2E",
+            "white" => "#F5F5F5",
+            "red" => "#D93025",
+            "green" => "#2E9E5B",
+            "yellow" => "#E4B72C",
+            _ => "#B08D57"
+        };
     }
 }
