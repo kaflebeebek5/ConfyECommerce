@@ -396,3 +396,15 @@
     font-weight: 700;
     letter-spacing: -0.5px;
 }
+.auth-login-btn {
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: #fff;
+    padding: 6px 16px;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background .15s ease;
+    background-color: #062847
+}
