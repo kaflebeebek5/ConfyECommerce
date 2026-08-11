@@ -1,58 +1,56 @@
 ﻿@page "/login"
-@inject NavigationManager Nav
-@inject IHttpContextAccessor HttpContextAccessor
-@inject NotificationService NotificationService
+@attribute [AllowAnonymous]
+@using Microsoft.AspNetCore.Authorization
 
-<RadzenStack AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center" Style="height:80vh;">
-    <RadzenCard Style="width:350px;padding:2rem;">
-        <RadzenText TextStyle="TextStyle.H5" class="rz-mb-4" TextAlign="TextAlign.Center">
-            Admin Login
-        </RadzenText>
+<div class="lg-page">
+    <div class="lg-card">
+        <div class="lg-icon">
+            <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="11" width="18" height="10" rx="2" />
+                <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+            </svg>
+        </div>
 
-        <RadzenTemplateForm TItem="LoginModel" Data="@model" Submit="@HandleLogin">
-            <RadzenStack Gap="1rem">
-                <RadzenFormField Text="Username" Style="width:100%;">
-                    <RadzenTextBox @bind-Value="model.Username" Name="Username" />
-                </RadzenFormField>
+        <h1 class="lg-title">Admin Login</h1>
+        <p class="lg-subtitle">Sign in to manage products</p>
 
-                <RadzenFormField Text="Password" Style="width:100%;">
-                    <RadzenPassword @bind-Value="model.Password" Name="Password" />
-                </RadzenFormField>
+        @if (HasError)
+        {
+            <div class="lg-error">Invalid username or password.</div>
+        }
 
-                <RadzenButton ButtonType="ButtonType.Submit" Text="Login" Icon="login"
-                              ButtonStyle="ButtonStyle.Primary" class="rz-w-100" />
-            </RadzenStack>
-        </RadzenTemplateForm>
-    </RadzenCard>
-</RadzenStack>
+        <form method="post" action="/Account/Login" class="lg-form">
+            <input type="hidden" name="returnUrl" value="@ReturnUrl" />
+
+            <div class="lg-field">
+                <label for="username">Username</label>
+                <input id="username" name="username" type="text" autocomplete="username" required />
+            </div>
+
+            <div class="lg-field">
+                <label for="password">Password</label>
+                <input id="password" name="password" type="password" autocomplete="current-password" required />
+            </div>
+
+            <button type="submit" class="lg-submit">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
+                    <polyline points="10 17 15 12 10 7" />
+                    <line x1="15" y1="12" x2="3" y2="12" />
+                </svg>
+                Sign In
+            </button>
+        </form>
+    </div>
+</div>
 
 @code {
-    private LoginModel model = new();
-    private const string AdminUser = "admin";
-    private const string AdminPass = "ChangeMe123!";
+    [SupplyParameterFromQuery(Name = "error")]
+    public string? Error { get; set; }
 
-    private async Task HandleLogin()
-    {
-        if (model.Username == AdminUser && model.Password == AdminPass)
-        {
-            var claims = new List<Claim> { new(ClaimTypes.Name, AdminUser) };
-            var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-            var principal = new ClaimsPrincipal(identity);
+    [SupplyParameterFromQuery(Name = "returnUrl")]
+    public string? ReturnUrlParam { get; set; }
 
-            await HttpContextAccessor.HttpContext!.SignInAsync(
-                CookieAuthenticationDefaults.AuthenticationScheme, principal);
-
-            Nav.NavigateTo("/", forceLoad: true);
-        }
-        else
-        {
-            NotificationService.Notify(NotificationSeverity.Error, "Login Failed", "Invalid credentials");
-        }
-    }
-
-    public class LoginModel
-    {
-        public string Username { get; set; } = "";
-        public string Password { get; set; } = "";
-    }
+    private bool HasError => Error == "1";
+    private string ReturnUrl => string.IsNullOrWhiteSpace(ReturnUrlParam) ? "/admin/products" : ReturnUrlParam;
 }

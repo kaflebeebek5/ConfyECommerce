@@ -7,47 +7,7 @@
 
 <div class="pf-form">
 
-    <div class="pf-gallery-section">
-        <label class="pf-gallery-label">Product Images <span class="pf-required">*</span></label>
-
-        <div class="pf-gallery-grid">
-            @* Single unified list — existing (Id != 0) and newly-picked (Id == 0) images together *@
-            @for (int i = 0; i < Model.ProductImages.Count; i++)
-            {
-                var index = i;
-                var img = Model.ProductImages[index];
-                var isExisting = img.Id != 0;
-
-                <div class="@("pf-gallery-item" + (isExisting ? " pf-gallery-item-existing" : ""))">
-                    <img src="@GetPreviewSrc(img)" alt="Product image" />
-                    <button type="button" class="pf-gallery-remove" @onclick="@(() => RemoveImage(index))">×</button>
-                    @if (isExisting)
-                    {
-                        <span class="pf-gallery-existing-tag">Saved</span>
-                    }
-                    else if (index == 0)
-                    {
-                        <span class="pf-gallery-cover-tag">Cover</span>
-                    }
-                </div>
-            }
-
-            <InputFile OnChange="OnFilesSelected" multiple accept="image/*" class="pf-file-input" id="pf-file-input" style="display:none" />
-            <label for="pf-file-input" class="pf-gallery-add">
-                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.6">
-                    <line x1="12" y1="5" x2="12" y2="19" />
-                    <line x1="5" y1="12" x2="19" y2="12" />
-                </svg>
-                <span>Add Images</span>
-            </label>
-        </div>
-
-        @if (ImageError is not null)
-        {
-            <div class="pf-field-error">@ImageError</div>
-        }
-        <div class="pf-gallery-hint">First image is used as the cover photo. Up to @MaxImages images, @(MaxFileSizeBytes / (1024 * 1024)) MB each.</div>
-    </div>
+  
 
     <div class="pf-fields">
         <div class="pf-field">
@@ -91,6 +51,47 @@
             <input type="number" min="0" step="1"
                    class="@("pf-input" + (ShowValidation && Model.StockQuantity < 0 ? " pf-input-error" : ""))"
                    @bind="Model.StockQuantity" />
+        </div>
+        <div class="pf-gallery-section">
+            <label class="pf-gallery-label">Product Images <span class="pf-required">*</span></label>
+
+            <div class="pf-gallery-grid">
+                @* Single unified list — existing (Id != 0) and newly-picked (Id == 0) images together *@
+                @for (int i = 0; i < Model.ProductImages.Count; i++)
+                {
+                    var index = i;
+                    var img = Model.ProductImages[index];
+                    var isExisting = img.Id != 0;
+
+                    <div class="@("pf-gallery-item" + (isExisting ? " pf-gallery-item-existing" : ""))">
+                        <img src="@GetPreviewSrc(img)" alt="Product image" />
+                        <button type="button" class="pf-gallery-remove" @onclick="@(() => RemoveImage(index))">×</button>
+                        @if (isExisting)
+                        {
+                            <span class="pf-gallery-existing-tag">Saved</span>
+                        }
+                        else if (index == 0)
+                        {
+                            <span class="pf-gallery-cover-tag">Cover</span>
+                        }
+                    </div>
+                }
+
+                <InputFile OnChange="OnFilesSelected" multiple accept="image/*" class="pf-file-input" id="pf-file-input" style="display:none" />
+                <label for="pf-file-input" class="pf-gallery-add">
+                    <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.6">
+                        <line x1="12" y1="5" x2="12" y2="19" />
+                        <line x1="5" y1="12" x2="19" y2="12" />
+                    </svg>
+                    <span>Add Images</span>
+                </label>
+            </div>
+
+            @if (ImageError is not null)
+            {
+                <div class="pf-field-error">@ImageError</div>
+            }
+            <div class="pf-gallery-hint">First image is used as the cover photo. Up to @MaxImages images, @(MaxFileSizeBytes / (1024 * 1024)) MB each.</div>
         </div>
     </div>
 

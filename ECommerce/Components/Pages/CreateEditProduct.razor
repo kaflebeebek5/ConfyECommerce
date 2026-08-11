@@ -5,9 +5,10 @@
 @inject IProductService ProductService
 @inject DialogService DialogService
 @inject NotificationService NotificationService
+@attribute [Authorize]
 <header class="mk-topbar">
     <div class="mk-topbar-inner">
-
+       
         <!-- Logo -->
         <div class="mk-logo">
             <span class="mk-logo-icon">
@@ -29,7 +30,9 @@
             <span class="mk-logo-text">
                 Confy Wear
             </span>
+           
         </div>
+        <AuthStatus />
     </div>
 </header>
 <div class="ap-page">
@@ -163,7 +166,8 @@
           new DialogOptions
           {
               Width = "789px",
-              Height = "549px",
+              Height = "503px",
+              Top = "70px",
               Draggable = true,
               Resizable = true,
               CloseDialogOnOverlayClick = false,
