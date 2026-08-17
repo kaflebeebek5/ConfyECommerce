@@ -44,6 +44,7 @@ builder.Services.AddScoped<NotificationService>();
 builder.Services.AddScoped<TooltipService>();
 builder.Services.AddScoped<ContextMenuService>();
 builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddScoped<IStyleService, StyleService>();
 builder.Services.AddScoped<IFileService, FileUploadService>();
 builder.Services.AddHttpContextAccessor();
 

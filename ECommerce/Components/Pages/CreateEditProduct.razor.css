@@ -1,20 +1,20 @@
 ﻿.ap-page {
-    --brand: #5B4FE9;
-    --brand-deep: #4A3FD1;
-    --brand-tint: #EFEDFF;
-    --ink: #16161D;
-    --muted: #8B8B99;
-    --border: #ECECF2;
-    --bg: #F6F6FA;
-    --success: #1FA971;
+    --brand: #11346f;
+    --brand-deep: #2a3526;
+    --brand-tint: #f0ede8;
+    --ink: #221F1A;
+    --muted: #8A8272;
+    --border: #E4E0D8;
+    --bg: #FBF7F1;
+    --success: #2E9E5B;
     --success-tint: #E4F7EE;
-    --warn: #C6820B;
+    --warn: #D98E2B;
     --warn-tint: #FDF3DE;
-    --danger: #DB4C4C;
+    --danger: #C1440E;
     --danger-tint: #FCEBEB;
     margin: 0 auto;
     padding: 0px 5px 50px;
-    font-family: 'Inter', -apple-system, sans-serif;
+    font-family: 'Poppins', -apple-system, sans-serif;
     color: var(--ink);
     background: var(--bg);
 }
@@ -25,7 +25,26 @@
     align-items: flex-start;
     justify-content: space-between;
     margin-bottom: 28px;
-    margin-top: 20px;
+}
+
+.cp-back-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 7px 16px;
+    background: #fff;
+    border: 1.5px solid var(--border);
+    border-radius: 6px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--ink);
+    text-decoration: none;
+    transition: all 0.15s;
+}
+
+.cp-back-btn:hover {
+    background: var(--bg);
+    border-color: #ccc;
 }
 
 .ap-title {
@@ -349,62 +368,4 @@
     }
 }
 
-/*------------------Header------------------*/
-.mk-topbar {
-    height: 58px;
-    background: linear-gradient( 90deg, #062642 0%, #082F53 100% );
-    position: sticky;
-    top: 0;
-    z-index: 100000;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
-    margin-top: -24px;
-    margin-right: -24px;
-    margin-left: -24px;
-}
-
-
-.mk-topbar-inner {
-    height: 100%;
-    margin: 0 auto;
-    padding: 0 22px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 30px;
-}
-
-.mk-logo {
-    display: flex;
-    align-items: center;
-    gap: 7px;
-    color: #FFFFFF;
-    flex-shrink: 0;
-}
-
-
-.mk-logo-icon {
-    width: 25px;
-    height: 25px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-
-.mk-logo-text {
-    font-size: 21px;
-    font-weight: 700;
-    letter-spacing: -0.5px;
-}
-.auth-login-btn {
-    background: rgba(255, 255, 255, 0.15);
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    color: #fff;
-    padding: 6px 16px;
-    border-radius: 6px;
-    font-size: 0.8rem;
-    font-weight: 600;
-    text-decoration: none;
-    transition: background .15s ease;
-    background-color: #062847
-}
+/* Header styles moved to app.css (site-header) */

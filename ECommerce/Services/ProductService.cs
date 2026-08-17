@@ -65,6 +65,7 @@ namespace ECommerce.Services
                 Size = product.Size,
                 Color = product.Color,
                 Brand = product.Brand,
+                StyleId = product.StyleId,
                 StockQuantity = product.StockQuantity,
                 ImagePath = product.ImagePath,
                 CreatedAt = DateTime.UtcNow
@@ -99,6 +100,7 @@ namespace ECommerce.Services
             existing.Size = product.Size;
             existing.Color = product.Color;
             existing.Brand = product.Brand;
+            existing.StyleId = product.StyleId;
             existing.StockQuantity = product.StockQuantity;
 
             // Only overwrite image if a new one was uploaded

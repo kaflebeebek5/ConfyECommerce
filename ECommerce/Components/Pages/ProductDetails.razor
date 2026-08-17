@@ -3,33 +3,38 @@
 @using ECommerce.Entities
 @inject ECommerce.Services.IProductService ProductService
 @inject NavigationManager Nav
-<header class="mk-topbar">
-    <div class="mk-topbar-inner">
 
-        <!-- Logo -->
-        <div class="mk-logo">
-            <span class="mk-logo-icon">
-                <svg viewBox="0 0 32 32"
-                     width="25"
-                     height="25"
-                     fill="none">
+<header class="site-header">
+    <div class="site-header-inner">
+        <button class="site-hamburger" @onclick="ToggleMobileMenu" aria-label="Menu">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="3" y1="6" x2="21" y2="6" />
+                <line x1="3" y1="12" x2="21" y2="12" />
+                <line x1="3" y1="18" x2="21" y2="18" />
+            </svg>
+        </button>
 
-                    <circle cx="16" cy="5" r="4" fill="currentColor" />
-                    <circle cx="6" cy="11" r="4" fill="currentColor" />
-                    <circle cx="26" cy="11" r="4" fill="currentColor" />
-                    <circle cx="9" cy="23" r="4" fill="currentColor" />
-                    <circle cx="23" cy="23" r="4" fill="currentColor" />
-                    <circle cx="16" cy="16" r="4" fill="currentColor" />
+        <div class="site-header-left">
+            <a href="/" class="site-logo">
+                <a href="https://www.instagram.com/comfywear____?igsh=MTF0aXk3dWJlMHkwNA==" target="_blank" rel="noopener noreferrer" class="site-insta">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+                        <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+                        <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
+                    </svg>
+                </a>
+                <p style="color:white;margin-top: 15px;">comfy wear</p>
+            </a>
 
-                </svg>
-            </span>
-
-            <span class="mk-logo-text">
-                Confy Wear
-            </span>
-           
+            <nav class="site-nav @(_mobileMenuOpen ? "site-nav-open" : "")">
+                <a class="site-nav-link" href="/" @onclick="@(() => _mobileMenuOpen = false)">Home</a>
+                <a class="site-nav-link" href="/items" @onclick="@(() => _mobileMenuOpen = false)">Shop</a>
+            </nav>
         </div>
-        <AuthStatus />
+
+        <div class="site-header-right">
+            <AuthStatus />
+        </div>
     </div>
 </header>
 
@@ -37,780 +42,298 @@
 {
     <div class="pd-page">
         <div class="pd-loading">
-            Loading...
+            <div class="pd-spinner"></div>
+            <span>Loading product...</span>
         </div>
     </div>
 }
 else if (Product is null)
 {
     <div class="pd-page">
-
         <div class="pd-empty">
-
-            <div class="pd-empty-title">
-                Product not found.
+            <div class="pd-empty-icon">
+                <svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.2">
+                    <circle cx="12" cy="12" r="10" />
+                    <path d="M16 16s-1.5-2-4-2-4 2-4 2" />
+                    <line x1="9" y1="9" x2="9.01" y2="9" stroke-width="2" />
+                    <line x1="15" y1="9" x2="15.01" y2="9" stroke-width="2" />
+                </svg>
             </div>
-
-            <button class="pd-back-btn"
-                    @onclick='@(() => Nav.NavigateTo("/"))'>
+            <h2 class="pd-empty-title">Product not found</h2>
+            <p class="pd-empty-sub">The product you're looking for doesn't exist or has been removed.</p>
+            <button class="pd-btn-primary" @onclick="GoBack">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <line x1="19" y1="12" x2="5" y2="12" />
+                    <polyline points="12 19 5 12 12 5" />
+                </svg>
                 Back to Shop
             </button>
-
         </div>
-
     </div>
 }
 else
 {
-    var inStock = Product.StockQuantity > 0;
-    var lowStock = Product.StockQuantity > 0 &&
-                   Product.StockQuantity <= 5;
-
     <div class="pd-page">
 
-        <!-- =====================================================
-             BREADCRUMB
-             ===================================================== -->
+        <!-- FLOATING BACK BUTTON -->
+        <button class="pd-floating-back" @onclick="GoBack">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5">
+                <line x1="19" y1="12" x2="5" y2="12" />
+                <polyline points="12 19 5 12 12 5" />
+            </svg>
+        </button>
 
-        <div class="pd-crumb">
+        <!-- HERO: IMAGE + INFO SIDE BY SIDE -->
+        <div class="pd-hero">
 
-            <span class="pd-crumb-link"
-                  @onclick='@(() => Nav.NavigateTo("/"))'>
-                Shop
-            </span>
-
-            <span class="pd-crumb-separator">
-                /
-            </span>
-
-            @if (!string.IsNullOrWhiteSpace(Product.Brand))
-            {
-                <span class="pd-crumb-brand">
-                    @Product.Brand
-                </span>
-
-                <span class="pd-crumb-separator">
-                    /
-                </span>
-            }
-
-            <span class="pd-crumb-current">
-                @Product.Name
-            </span>
-            @* <div class="pd-back-home">
-                <button type="button"
-                        class="pd-home-btn"
-                        @onclick="GoHome">
-                    <RadzenIcon Icon="arrow_back" />
-                    <span>Back to Home</span>
-                </button>
-            </div> *@
-
-        </div>
-       
-
-
-        <!-- =====================================================
-             MAIN PRODUCT
-             ===================================================== -->
-
-        <div class="pd-product-card">
-
-            <!-- =================================================
-                 LEFT SIDE - IMAGE
-                 ================================================= -->
-
+            <!-- GALLERY -->
             <div class="pd-gallery">
-                <div class="pd-main-image">
-
+                <div class="pd-main-image" @onclick="OpenLightbox">
                     @if (productImages != null && productImages.Count > 0)
                     {
-                        var selectedImage = productImages[selectedImageIndex];
-
-                        @if (!string.IsNullOrWhiteSpace(selectedImage.ImagePath))
+                        var img = productImages[selectedImageIndex];
+                        @if (!string.IsNullOrWhiteSpace(img.ImagePath))
                         {
-                            <img src="@selectedImage.ImagePath"
-                                 alt="Product image" />
+                            <img src="@img.ImagePath" alt="@Product.Name" />
                         }
                         else
                         {
-                            <svg viewBox="0 0 64 64"
-                                 width="60"
-                                 height="60"
-                                 fill="none"
-                                 stroke="currentColor"
-                                 stroke-width="1.5">
-
-                                <rect x="8" y="8" width="48" height="48" rx="4" />
+                            <div class="pd-img-placeholder">
+                                <svg viewBox="0 0 64 64" width="52" height="52" fill="none" stroke="currentColor" stroke-width="1.2">
+                                    <rect x="8" y="8" width="48" height="48" rx="6" />
+                                    <circle cx="22" cy="24" r="5" />
+                                    <path d="M8 44l14-14 10 10 8-8 16 16" />
+                                </svg>
+    </div>
+}
+                        @if (productImages.Count > 1)
+                        {
+                            <span class="pd-img-counter">@(selectedImageIndex + 1) / @productImages.Count</span>
+                        }
+                        <div class="pd-img-zoom">
+                            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
+                                <line x1="11" y1="8" x2="11" y2="14" /><line x1="8" y1="11" x2="14" y2="11" />
+                            </svg>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="pd-img-placeholder">
+                            <svg viewBox="0 0 64 64" width="52" height="52" fill="none" stroke="currentColor" stroke-width="1.2">
+                                <rect x="8" y="8" width="48" height="48" rx="6" />
                                 <circle cx="22" cy="24" r="5" />
                                 <path d="M8 44l14-14 10 10 8-8 16 16" />
-
                             </svg>
-                        }
-                    }
-                    else
-                    {
-                        <svg viewBox="0 0 64 64"
-                             width="60"
-                             height="60"
-                             fill="none"
-                             stroke="currentColor"
-                             stroke-width="1.5">
-
-                            <rect x="8" y="8" width="48" height="48" rx="4" />
-                            <circle cx="22" cy="24" r="5" />
-                            <path d="M8 44l14-14 10 10 8-8 16 16" />
-
-                        </svg>
-                    }
-
-                </div>
-               @*  <div class="pd-main-image">
-
-                    @if (!string.IsNullOrWhiteSpace(Product.ImagePath))
-                    {
-                        <img src="@Product.ImagePath"
-                             alt="@Product.Name"
-                             class="@(!inStock ? "pd-img-muted" : "")" />
-                    }
-                    else
-                    {
-                        <div class="pd-img-fallback">
-
-                            <svg viewBox="0 0 64 64"
-                                 width="60"
-                                 height="60"
-                                 fill="none"
-                                 stroke="currentColor"
-                                 stroke-width="1.5">
-
-                                <rect x="8"
-                                      y="8"
-                                      width="48"
-                                      height="48"
-                                      rx="4" />
-
-                                <circle cx="22"
-                                        cy="24"
-                                        r="5" />
-
-                                <path d="M8 44l14-14 10 10 8-8 16 16" />
-
-                            </svg>
-
                         </div>
                     }
-
-                </div> *@
-
-
-                <!-- =================================================
-                     THUMBNAILS
-                     ================================================= -->
-
-                <div class="pd-thumbnails">
-
-                    <!-- Previous -->
-                    <button class="pd-gallery-arrow"
-                            type="button">
-                        ‹
-                    </button>
-
-
-                    @for (int i = 0; i < productImages.Count; i++)
-                    {
-                        var index = i;
-                        var item = productImages[index];
-
-                        <button type="button"
-                                class="pd-thumbnail @(selectedImageIndex == index ? "pd-thumbnail-active" : "")"
-                                @onclick="() => SelectImage(index)">
-
-                            @if (!string.IsNullOrWhiteSpace(item.ImagePath))
-                            {
-                                <img src="@item.ImagePath"
-                                     alt="Product image" />
-                            }
-
-                        </button>
-                    }
-
-
-                    <!-- Next -->
-                    <button class="pd-gallery-arrow"
-                            type="button">
-                        ›
-                    </button>
-
                 </div>
 
+                @if (productImages != null && productImages.Count > 1)
+                {
+                    <div class="pd-thumbs">
+                        @for (int i = 0; i < productImages.Count; i++)
+                        {
+                            var idx = i;
+                            <button type="button"
+                                    class="pd-thumb @(selectedImageIndex == idx ? "pd-thumb-active" : "")"
+                                    @onclick="() => SelectImage(idx)"
+                                    @onclick:stopPropagation="true">
+                                @if (!string.IsNullOrWhiteSpace(productImages[idx].ImagePath))
+                                {
+                                    <img src="@productImages[idx].ImagePath" alt="" />
+                                }
+                            </button>
+                        }
+                    </div>
+                }
             </div>
 
-
-            <!-- =================================================
-                 RIGHT SIDE - PRODUCT INFORMATION
-                 ================================================= -->
-
+            <!-- PRODUCT INFO -->
             <div class="pd-info">
 
-                <!-- Brand -->
+                <!-- Breadcrumb inside info -->
+                <nav class="pd-crumb">
+                    <span class="pd-crumb-link" @onclick="GoBack">Shop</span>
+                    <span class="pd-crumb-sep">/</span>
+                    @if (!string.IsNullOrWhiteSpace(Product.Brand))
+                    {
+                        <span class="pd-crumb-text">@Product.Brand</span>
+                        <span class="pd-crumb-sep">/</span>
+                    }
+                    <span class="pd-crumb-current">@Product.Name</span>
+                </nav>
 
                 @if (!string.IsNullOrWhiteSpace(Product.Brand))
                 {
-                    <div class="pd-brand">
-                        @Product.Brand.ToUpper()
-                    </div>
+                    <div class="pd-brand-badge">@Product.Brand.ToUpper()</div>
                 }
 
+                <h1 class="pd-name">@Product.Name</h1>
 
-                <!-- Name -->
-
-                <h1 class="pd-name">
-                    @Product.Name
-                </h1>
-
-
-                <!-- Price -->
-
-                <div class="pd-price">
-                    Rs.@Product.Price.ToString("N0")
-                </div>
-
-
-                <!-- Stock -->
-
-                <div class="@($"pd-stock-badge {(inStock ? (lowStock ? "pd-stock-low" : "pd-stock-in") : "pd-stock-out")}")">
-
-                    <span class="pd-stock-dot"></span>
-
-                    @(inStock
-                        ? (lowStock
-                            ? $"Only {Product.StockQuantity} left"
-                            : "In Stock")
-                        : "Out of Stock")
-
-                </div>
-
-
-                <div class="pd-divider"></div>
-
-
-                <!-- =================================================
-                     SIZE
-                     ================================================= -->
-
-                @if (Sizes.Any())
+                @if (!string.IsNullOrWhiteSpace(Product.Description))
                 {
-                    <div class="pd-field">
-
-                        <div class="pd-field-label">
-                            SIZE
-                        </div>
-
-                        <div class="pd-pill-row">
-
-                            @foreach (var size in Sizes)
-                            {
-                                <button type="button"
-                                        class="@($"pd-pill {(size == SelectedSize ? "pd-pill-active" : "")}")"
-                                        @onclick="@(() => SelectedSize = size)">
-
-                                    @size
-
-                                </button>
-                            }
-
-                        </div>
-
-                    </div>
+                    <p class="pd-desc">@Product.Description</p>
                 }
 
-
-                <!-- =================================================
-                     COLOR
-                     ================================================= -->
-
-                @if (Colors.Any())
-                {
-                    <div class="pd-field">
-
-                        <div class="pd-field-label">
-                            COLOR
+                <!-- QUICK SPECS -->
+                <div class="pd-quick-specs">
+                    @if (!string.IsNullOrWhiteSpace(Product.Size))
+                    {
+                        <div class="pd-qs">
+                            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+                            <div>
+                                <span class="pd-qs-label">Available Sizes</span>
+                                <span class="pd-qs-value">@Product.Size</span>
+                            </div>
                         </div>
-
-                        <div class="pd-color-row">
-
-                            @foreach (var item in Colors)
-                            {
-                                <button type="button"
-                                        class="@($"pd-color-option")"
-                                        >
-
-                                    <span class="pd-swatch"
-                                          style="background:@ColorToHex(item)">
-                                    </span>
-
-                                    <span class="pd-color-name">
-                                        @item
-                                    </span>
-
-                                </button>
-                            }
-
-                        </div>
-
-                    </div>
-                }
-
-
-                <!-- =================================================
-                     QUANTITY
-                     ================================================= -->
-
-                <div class="pd-field">
-
-                    <div class="pd-field-label">
-                        QUANTITY
-                    </div>
-
-                    <div class="pd-qty-row">
-
-                        <button class="pd-qty-btn"
-                                @onclick="Decrement"
-                                disabled="@(Quantity <= 1)">
-                            −
-                        </button>
-
-                        <span class="pd-qty-value">
-                            @Quantity
-                        </span>
-
-                        <button class="pd-qty-btn"
-                                @onclick="Increment"
-                                disabled="@(Quantity >= Product.StockQuantity)">
-                            +
-                        </button>
-
-                    </div>
-
-                </div>
-
-
-                <!-- =================================================
-                     ACTION BUTTONS
-                     ================================================= -->
-
-                <div class="pd-actions">
-
-                    <button class="pd-btn-primary"
-                            disabled="@(!inStock)"
-                            @onclick="AddToCart">
-
-                        <span class="pd-btn-icon">
-                            <svg viewBox="0 0 24 24"
-                                 width="17"
-                                 height="17"
-                                 fill="none"
-                                 stroke="currentColor"
-                                 stroke-width="1.8">
-
-                                <circle cx="9"
-                                        cy="21"
-                                        r="1" />
-
-                                <circle cx="20"
-                                        cy="21"
-                                        r="1" />
-
-                                <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
-
-                            </svg>
-                        </span>
-
-                        @(inStock ? "Add to Cart" : "Notify Me")
-
-                    </button>
-
-
-                    <button class="pd-btn-secondary"
-                            disabled="@(!inStock)"
-                            @onclick="BuyNow">
-
-                        <span class="pd-btn-icon">
-                            ⚡
-                        </span>
-
-                        Buy Now
-
-                    </button>
-
-                </div>
-
-
-                @if (AddedMessage is not null)
-                {
-                    <div class="pd-added-msg">
-                        @AddedMessage
-                    </div>
-                }
-
-            </div>
-
-        </div>
-
-
-        <!-- =====================================================
-             PRODUCT DETAILS
-             ===================================================== -->
-
-        <div class="pd-details-card">
-
-            <!-- LEFT - SPECS -->
-
-            <div class="pd-spec-section">
-
-                <h2 class="pd-section-title">
-                    Product Details
-                </h2>
-
-
-                @if (!string.IsNullOrWhiteSpace(Product.Brand))
-                {
-                    <div class="pd-spec-row">
-
-                        <div class="pd-spec-label">
-                            <span class="pd-spec-icon">◉</span>
-                            Brand
-                        </div>
-
-                        <div class="pd-spec-value">
-                            @Product.Brand
-                        </div>
-
-                    </div>
-                }
-
-
-                @if (!string.IsNullOrWhiteSpace(Product.Color))
-                {
-                    <div class="pd-spec-row">
-
-                        <div class="pd-spec-label">
-                            <span class="pd-spec-icon">◇</span>
-                            Color
-                        </div>
-
-                        <div class="pd-spec-value pd-spec-colors">
-
-                            @foreach (var color in Colors)
-                            {
-                                <span class="pd-mini-swatch"
-                                      style="background:@ColorToHex(color)">
+                    }
+                    @if (!string.IsNullOrWhiteSpace(Product.Color))
+                    {
+                        <div class="pd-qs">
+                            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="13.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="10.5" r="2.5"/><circle cx="8.5" cy="7.5" r="2.5"/><circle cx="6.5" cy="12" r="2.5"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.9 0 1.7-.8 1.7-1.7 0-.5-.2-.9-.5-1.2-.3-.3-.5-.7-.5-1.2 0-.9.8-1.7 1.7-1.7H16c3.3 0 6-2.7 6-6 0-5.5-4.5-9-10-9z"/></svg>
+                            <div>
+                                <span class="pd-qs-label">Colors</span>
+                                <span class="pd-qs-value">
+                                    @foreach (var c in Colors)
+                                    {
+                                        <span class="pd-swatch-sm" style="background:@ColorToHex(c)"></span>
+                                    }
+                                    @Product.Color
                                 </span>
-                            }
-
-                            @Product.Color
-
+                            </div>
                         </div>
-
-                    </div>
-                }
-
-
-                @if (!string.IsNullOrWhiteSpace(Product.Size))
-                {
-                    <div class="pd-spec-row">
-
-                        <div class="pd-spec-label">
-                            <span class="pd-spec-icon">◇</span>
-                            Available Sizes
+                    }
+                    <div class="pd-qs">
+                        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                        <div>
+                            <span class="pd-qs-label">Listed</span>
+                            <span class="pd-qs-value">@Product.CreatedAt.ToString("MMM d, yyyy")</span>
                         </div>
-
-                        <div class="pd-spec-value">
-                            @Product.Size
-                        </div>
-
                     </div>
-                }
-
-
-                <div class="pd-spec-row">
-
-                    <div class="pd-spec-label">
-                        <span class="pd-spec-icon">▣</span>
-                        Stock
-                    </div>
-
-                    <div class="pd-spec-value">
-                        @Product.StockQuantity units
-                    </div>
-
                 </div>
 
-
-                <div class="pd-spec-row">
-
-                    <div class="pd-spec-label">
-                        <span class="pd-spec-icon">▣</span>
-                        Listed
+                <!-- FEATURES ROW -->
+                <div class="pd-features-row">
+                    <div class="pd-feat">
+                        <div class="pd-feat-circle">
+                            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                        </div>
+                        <span>Premium Quality</span>
                     </div>
-
-                    <div class="pd-spec-value">
-                        @Product.CreatedAt.ToString("MMM d, yyyy")
+                    <div class="pd-feat">
+                        <div class="pd-feat-circle">
+                            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                        </div>
+                        <span>Durable Build</span>
                     </div>
-
+                    <div class="pd-feat">
+                        <div class="pd-feat-circle">
+                            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
+                        </div>
+                        <span>Comfortable Fit</span>
+                    </div>
+                    <div class="pd-feat">
+                        <div class="pd-feat-circle">
+                            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+                        </div>
+                        <span>Lightweight</span>
+                    </div>
                 </div>
 
             </div>
-
-
-            <!-- RIGHT - DESCRIPTION + FEATURES -->
-
-            <div class="pd-description-section">
-
-                <div class="pd-description">
-
-                    @if (!string.IsNullOrWhiteSpace(Product.Description))
-                    {
-                        <p>
-                            @Product.Description
-                        </p>
-                    }
-                    else
-                    {
-                        <p>
-                            Step into style and comfort with
-                            the @Product.Name by @Product.Brand.
-                        </p>
-
-                        <p>
-                            Designed with premium materials and
-                            a sleek finish, this product is perfect
-                            for any occasion.
-                        </p>
-                    }
-
-                </div>
-
-
-                <!-- FEATURES -->
-
-                <div class="pd-features">
-
-                    <div class="pd-feature">
-
-                        <div class="pd-feature-icon">
-                            ♡
-                        </div>
-
-                        <div class="pd-feature-title">
-                            Premium
-                        </div>
-
-                        <div class="pd-feature-text">
-                            Quality
-                        </div>
-
-                    </div>
-
-
-                    <div class="pd-feature">
-
-                        <div class="pd-feature-icon">
-                            ☺
-                        </div>
-
-                        <div class="pd-feature-title">
-                            Comfort
-                        </div>
-
-                        <div class="pd-feature-text">
-                            Fit
-                        </div>
-
-                    </div>
-
-
-                    <div class="pd-feature">
-
-                        <div class="pd-feature-icon">
-                            ♧
-                        </div>
-
-                        <div class="pd-feature-title">
-                            Durable
-                        </div>
-
-                        <div class="pd-feature-text">
-                            Material
-                        </div>
-
-                    </div>
-
-
-                    <div class="pd-feature">
-
-                        <div class="pd-feature-icon">
-                            ◇
-                        </div>
-
-                        <div class="pd-feature-title">
-                            Lightweight
-                        </div>
-
-                        <div class="pd-feature-text">
-                            Design
-                        </div>
-
-                    </div>
-
-                </div>
-
-            </div>
-
         </div>
+
+        <!-- LIGHTBOX -->
+        @if (LightboxOpen && productImages != null && productImages.Count > 0)
+        {
+            <div class="pd-lightbox" @onclick="CloseLightbox">
+                <button class="pd-lb-close" @onclick="CloseLightbox" @onclick:stopPropagation="true">
+                    <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
+                    </svg>
+                </button>
+
+                @if (productImages.Count > 1)
+                {
+                    <button class="pd-lb-arrow pd-lb-prev" @onclick="PrevImage" @onclick:stopPropagation="true">
+                        <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <polyline points="15 18 9 12 15 6" />
+                        </svg>
+                    </button>
+                }
+
+                <img src="@productImages[selectedImageIndex].ImagePath" alt="@Product.Name" @onclick:stopPropagation="true" />
+
+                @if (productImages.Count > 1)
+                {
+                    <button class="pd-lb-arrow pd-lb-next" @onclick="NextImage" @onclick:stopPropagation="true">
+                        <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5">
+                            <polyline points="9 18 15 12 9 6" />
+                        </svg>
+                    </button>
+                }
+
+                <span class="pd-lb-counter">@(selectedImageIndex + 1) / @productImages.Count</span>
+            </div>
+        }
 
     </div>
 }
-
 
 @code {
 
     [Parameter]
     public int Id { get; set; }
+
     private int selectedImageIndex = 0;
-
-    
-
     private Product? Product;
-
     private bool Loading = true;
+    private bool LightboxOpen = false;
+    private bool _mobileMenuOpen = false;
     private List<ECommerce.ViewModel.ProductImages> productImages = new();
-
-    private string[] Sizes =
-        Array.Empty<string>();
-
-    private string[] Colors =
-        Array.Empty<string>();
-
-
-    private string? SelectedSize;
-
-    private string? SelectedColor;
-
-
-    private int Quantity = 1;
-
-    private string? AddedMessage;
-
+    private string[] Colors = Array.Empty<string>();
 
     protected override async Task OnParametersSetAsync()
     {
         Loading = true;
-
-        AddedMessage = null;
-
-        Quantity = 1;
-
-        SelectedSize = null;
-
-        SelectedColor = null;
-
-
-        var all =
-            await ProductService.GetAllAsync();
-
-
-        Product =
-            all.FirstOrDefault(p => p.Id == Id);
-        productImages = await ProductService.GetByIdAsync(Id);
         selectedImageIndex = 0;
+        LightboxOpen = false;
 
+        var all = await ProductService.GetAllAsync();
+        Product = all.FirstOrDefault(p => p.Id == Id);
+        productImages = await ProductService.GetByIdAsync(Id);
 
-        if (Product is not null)
+        if (Product is not null && !string.IsNullOrWhiteSpace(Product.Color))
         {
-            if (!string.IsNullOrWhiteSpace(Product.Size))
-            {
-                Sizes =
-                    Product.Size.Split(
-                        new[] { ',', '-' },
-                        StringSplitOptions.TrimEntries |
-                        StringSplitOptions.RemoveEmptyEntries);
-
-                if (Sizes.Any())
-                {
-                    SelectedSize = Sizes.First();
-                }
-            }
-
-
-            if (!string.IsNullOrWhiteSpace(Product.Color))
-            {
-                Colors =
-                    Product.Color.Split(
-                        new[] { ',', '-' },
-                        StringSplitOptions.TrimEntries |
-                        StringSplitOptions.RemoveEmptyEntries);
-
-                if (Colors.Any())
-                {
-                    SelectedColor = Colors.First();
-                }
-            }
+            Colors = Product.Color.Split(
+                new[] { ',', '-' },
+                StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
         }
-
 
         Loading = false;
     }
 
-
-    private void Increment()
-    {
-        if (Product is not null &&
-            Quantity < Product.StockQuantity)
-        {
-            Quantity++;
-        }
-    }
     private void SelectImage(int index)
     {
-        if (productImages == null ||
-            index < 0 ||
-            index >= productImages.Count)
-        {
-            return;
-        }
-
+        if (productImages is null || index < 0 || index >= productImages.Count) return;
         selectedImageIndex = index;
     }
 
-    private void Decrement()
+    private void OpenLightbox() => LightboxOpen = true;
+    private void CloseLightbox() => LightboxOpen = false;
+
+    private void PrevImage()
     {
-        if (Quantity > 1)
-        {
-            Quantity--;
-        }
+        if (productImages is null || productImages.Count == 0) return;
+        selectedImageIndex = (selectedImageIndex - 1 + productImages.Count) % productImages.Count;
     }
 
-
-    private void AddToCart()
+    private void NextImage()
     {
-        AddedMessage =
-            $"Added {Quantity} × {Product?.Name} to cart.";
+        if (productImages is null || productImages.Count == 0) return;
+        selectedImageIndex = (selectedImageIndex + 1) % productImages.Count;
     }
-
-
-    private void BuyNow()
-    {
-        AddToCart();
-
-        Nav.NavigateTo("/checkout");
-    }
-    private void GoHome()
-    {
-        Nav.NavigateTo("/");
-    }
-
 
     private static string ColorToHex(string color)
     {
@@ -833,4 +356,24 @@ else
         };
     }
 
+    private void ToggleMobileMenu()
+    {
+        _mobileMenuOpen = !_mobileMenuOpen;
+    }
+
+    private void GoBack()
+    {
+        var uri = new Uri(Nav.Uri);
+        var query = System.Web.HttpUtility.ParseQueryString(uri.Query);
+        var from = query["from"];
+
+        if (!string.IsNullOrWhiteSpace(from))
+        {
+            Nav.NavigateTo(from);
+        }
+        else
+        {
+            Nav.NavigateTo("/items");
+        }
+    }
 }

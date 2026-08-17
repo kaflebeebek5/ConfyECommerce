@@ -3,36 +3,29 @@
 @using ECommerce.ViewModel
 @using ECommerce.Services
 @inject IProductService ProductService
+@inject IStyleService StyleService
 @inject DialogService DialogService
 @inject NotificationService NotificationService
+@inject IJSRuntime JS
 @attribute [Authorize]
-<header class="mk-topbar">
-    <div class="mk-topbar-inner">
-       
-        <!-- Logo -->
-        <div class="mk-logo">
-            <span class="mk-logo-icon">
-                <svg viewBox="0 0 32 32"
-                     width="25"
-                     height="25"
-                     fill="none">
-
-                    <circle cx="16" cy="5" r="4" fill="currentColor" />
-                    <circle cx="6" cy="11" r="4" fill="currentColor" />
-                    <circle cx="26" cy="11" r="4" fill="currentColor" />
-                    <circle cx="9" cy="23" r="4" fill="currentColor" />
-                    <circle cx="23" cy="23" r="4" fill="currentColor" />
-                    <circle cx="16" cy="16" r="4" fill="currentColor" />
-
-                </svg>
-            </span>
-
-            <span class="mk-logo-text">
-                Confy Wear
-            </span>
-           
+<header class="site-header">
+    <div class="site-header-inner">
+        <div class="site-header-left">
+            <a href="/" class="site-logo">
+                <a href="https://www.instagram.com/comfywear____?igsh=MTF0aXk3dWJlMHkwNA==" target="_blank" rel="noopener noreferrer" class="site-insta">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+                        <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+                        <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
+                    </svg>
+                </a>
+                <p style="color:white;margin-top: 15px;">comfy wear</p>
+            </a>
         </div>
-        <AuthStatus />
+        <div class="site-header-right">
+            <span class="site-admin-badge">Admin</span>
+            <AuthStatus />
+        </div>
     </div>
 </header>
 <div class="ap-page">
@@ -42,7 +35,7 @@
             <h1 class="ap-title">Products</h1>
             <p class="ap-subtitle">@products.Count product@(products.Count == 1 ? "" : "s") in catalog</p>
         </div>
-        <a href="/" class="auth-login-btn">Back</a>
+        <a href="/" class="cp-back-btn">Back</a>
     </div>
 
     <div class="ap-toolbar">
@@ -64,6 +57,7 @@
                         <th class="ap-col-img"></th>
                         <th>Name</th>
                         <th>Brand</th>
+                        <th>Style</th>
                         <th>Price</th>
                         <th>Stock</th>
                         <th>Size</th>
@@ -90,6 +84,7 @@
                                 <div class="ap-sku">SKU-@p.Id.ToString("D4")</div>
                             </td>
                             <td><span class="ap-brand-tag">@p.Brand</span></td>
+                            <td><span class="ap-style-tag">@(GetStyleName(p.StyleId))</span></td>
                             <td class="ap-price">Rs.@p.Price.ToString("N0")</td>
                             <td>
                                 <span class="@("ap-stock-pill " + (p.StockQuantity == 0 ? "ap-stock-zero" : p.StockQuantity <= 5 ? "ap-stock-low" : "ap-stock-ok"))">
@@ -133,8 +128,15 @@
 
 @code {
     private List<Product> products = new();
+    private List<Style> styles = new();
     private bool Loading = true;
     private string SearchTerm = "";
+
+    private string GetStyleName(int? styleId)
+    {
+        if (styleId is null) return "—";
+        return styles.FirstOrDefault(s => s.Id == styleId)?.Name ?? "—";
+    }
 
     private IEnumerable<Product> FilteredProducts =>
         string.IsNullOrWhiteSpace(SearchTerm)
@@ -145,6 +147,7 @@
 
     protected override async Task OnInitializedAsync()
     {
+        styles = await StyleService.GetAllAsync();
         await LoadProducts();
     }
 
@@ -157,6 +160,8 @@
 
     private async Task OpenForm(Product? product)
     {
+        var isMobile = await JS.InvokeAsync<bool>("eval", "window.innerWidth <= 520");
+
         var result = await DialogService.OpenAsync<ProductFormDialog>(
           product is null ? "Add Product" : "Edit Product",
           new Dictionary<string, object>
@@ -165,11 +170,11 @@
           },
           new DialogOptions
           {
-              Width = "789px",
-              Height = "503px",
-              Top = "70px",
-              Draggable = true,
-              Resizable = true,
+              Width = isMobile ? "100vw" : "789px",
+              Height = isMobile ? "100dvh" : "auto",
+              Top = isMobile ? "0" : "40px",
+              Draggable = !isMobile,
+              Resizable = !isMobile,
               CloseDialogOnOverlayClick = false,
               CssClass = "product-dialog"
           }

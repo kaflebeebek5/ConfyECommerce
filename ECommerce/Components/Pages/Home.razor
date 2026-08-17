@@ -1,87 +1,76 @@
-﻿@page "/"
+﻿@page "/items"
 @using ECommerce.Entities
 @inject ECommerce.Services.IProductService ProductService
+@inject ECommerce.Services.IStyleService StyleService
 @inject NavigationManager Nav
 
 <div class="mk-page">
 
     <!-- ================= HEADER ================= -->
-    <header class="mk-topbar">
-        <div class="mk-topbar-inner">
-
-            <!-- Logo -->
-            <div class="mk-logo">
-                <span class="mk-logo-icon">
-                    <svg viewBox="0 0 32 32"
-                         width="25"
-                         height="25"
-                         fill="none">
-
-                        <circle cx="16" cy="5" r="4" fill="currentColor" />
-                        <circle cx="6" cy="11" r="4" fill="currentColor" />
-                        <circle cx="26" cy="11" r="4" fill="currentColor" />
-                        <circle cx="9" cy="23" r="4" fill="currentColor" />
-                        <circle cx="23" cy="23" r="4" fill="currentColor" />
-                        <circle cx="16" cy="16" r="4" fill="currentColor" />
-
-                    </svg>
-                </span>
-
-                <span class="mk-logo-text">
-                    Confy Wear
-                </span>
-            </div>
-
-
-            <!-- Search -->
-            <div class="mk-search">
-
-                <input type="text"
-                       placeholder="Search in Confy Wear shop..."
-                       @bind="SearchTerm"
-                       @bind:event="oninput" />
-
-                <button class="mk-search-btn"
-                        @onclick="ApplySearch">
-
-                    <svg viewBox="0 0 24 24"
-                         width="19"
-                         height="19"
-                         fill="none"
-                         stroke="currentColor"
-                         stroke-width="2">
-
-                        <circle cx="11"
-                                cy="11"
-                                r="7" />
-
-                        <line x1="21"
-                              y1="21"
-                              x2="16.65"
-                              y2="16.65" />
-
-                    </svg>
-
-                </button>
-
-            </div>
-           @*  <div class="mk-cart">
-                <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.6">
-                    <circle cx="9" cy="21" r="1" />
-                    <circle cx="20" cy="21" r="1" />
-                    <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
+    <header class="site-header">
+        <div class="site-header-inner">
+            <button class="site-hamburger" @onclick="ToggleMobileMenu" aria-label="Menu">
+                <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="3" y1="6" x2="21" y2="6" />
+                    <line x1="3" y1="12" x2="21" y2="12" />
+                    <line x1="3" y1="18" x2="21" y2="18" />
                 </svg>
-            </div> *@
+            </button>
 
-            <AuthStatus />
+            <div class="site-header-left">
+                <a href="/" class="site-logo">
+                    <a href="https://www.instagram.com/comfywear____?igsh=MTF0aXk3dWJlMHkwNA==" target="_blank" rel="noopener noreferrer" class="site-insta">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+                            <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+                            <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
+                        </svg>
+                    </a>
+                    <p style="color:white;margin-top: 15px;">comfy wear</p>
+                </a>
 
+                <nav class="site-nav @(_mobileMenuOpen ? "site-nav-open" : "")">
+                    <a class="site-nav-link" href="/" @onclick="@(() => _mobileMenuOpen = false)">Home</a>
+                    <a class="site-nav-link active" href="/items" @onclick="@(() => _mobileMenuOpen = false)">Shop</a>
+                </nav>
+            </div>
 
+            <div class="site-header-right">
+                <div class="site-search">
+                    <svg class="site-search-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="7" />
+                        <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                    </svg>
+                    <input type="text"
+                           class="site-search-input"
+                           placeholder="Search shoes..."
+                           @bind="SearchTerm"
+                           @bind:event="oninput" />
+                </div>
+                <AuthStatus />
+            </div>
         </div>
     </header>
 
 
     <!-- ================= PRODUCTS ================= -->
     <main class="mk-body">
+
+       @*  @if (!string.IsNullOrWhiteSpace(StyleSlug))
+        {
+            <div class="mk-filter-bar">
+                <span class="mk-filter-label">
+                    Showing: <strong>@StyleName</strong>
+                </span>
+                <button class="mk-filter-clear" @onclick="ClearStyleFilter">
+                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <line x1="18" y1="6" x2="6" y2="18" />
+                        <line x1="6" y1="6" x2="18" y2="18" />
+                    </svg>
+                    Clear Filter
+                </button>
+            </div>
+        } *@
 
         @if (FilteredProducts.Any())
         {
@@ -184,12 +173,12 @@
                             </div>
 
                             <!-- Price -->
-                            <div class="mk-price">
+                            @* <div class="mk-price">
                                 Rs.@p.Price.ToString("N0")
-                            </div>
+                            </div> *@
 
                             <!-- Quantity / Stock -->
-                            <div class="mk-stock-row">
+                            @* <div class="mk-stock-row">
 
                                 <div class="@($"mk-stock {(inStock ? "mk-stock-in" : "mk-stock-out")}")">
 
@@ -206,7 +195,7 @@
                                     </div>
                                 }
 
-                            </div>
+                            </div> *@
 
                         </div>
 
@@ -240,7 +229,9 @@
                 </div>
 
                 <div>
-                    No products match "@SearchTerm"
+                    @(string.IsNullOrWhiteSpace(StyleName)
+                        ? $"No products match \"{SearchTerm}\""
+                        : $"No {StyleName.ToLower()} products found")
                 </div>
 
             </div>
@@ -254,28 +245,62 @@
 @code {
 
     private List<Product> products = new();
+    private List<Style> styles = new();
 
     private string SearchTerm = "";
+    private string? StyleSlug;
+    private string StyleName = "";
+    private bool _mobileMenuOpen = false;
 
-    private IEnumerable<Product> FilteredProducts =>
-        string.IsNullOrWhiteSpace(SearchTerm)
-            ? products
-            : products.Where(p =>
-                (!string.IsNullOrWhiteSpace(p.Name) &&
-                 p.Name.Contains(
-                     SearchTerm,
-                     StringComparison.OrdinalIgnoreCase))
-                ||
-                (!string.IsNullOrWhiteSpace(p.Brand) &&
-                 p.Brand.Contains(
-                     SearchTerm,
-                     StringComparison.OrdinalIgnoreCase))
-            );
+    private IEnumerable<Product> FilteredProducts
+    {
+        get
+        {
+            var query = products.AsEnumerable();
+
+            if (!string.IsNullOrWhiteSpace(StyleSlug) && styles.Any())
+            {
+                var matchedStyle = styles.FirstOrDefault(s =>
+                    s.Slug.Equals(StyleSlug, StringComparison.OrdinalIgnoreCase));
+
+                if (matchedStyle is not null)
+                {
+                    StyleName = matchedStyle.Name;
+                    query = query.Where(p => p.StyleId == matchedStyle.Id);
+                }
+            }
+
+            if (!string.IsNullOrWhiteSpace(SearchTerm))
+            {
+                query = query.Where(p =>
+                    (!string.IsNullOrWhiteSpace(p.Name) &&
+                     p.Name.Contains(SearchTerm, StringComparison.OrdinalIgnoreCase))
+                    ||
+                    (!string.IsNullOrWhiteSpace(p.Brand) &&
+                     p.Brand.Contains(SearchTerm, StringComparison.OrdinalIgnoreCase)));
+            }
+
+            return query;
+        }
+    }
 
 
     protected override async Task OnInitializedAsync()
     {
+        styles = await StyleService.GetAllAsync();
+
+        var uri = new Uri(Nav.Uri);
+        var query = System.Web.HttpUtility.ParseQueryString(uri.Query);
+        StyleSlug = query["style"];
+
         products = await ProductService.GetAllAsync();
+    }
+
+    private void ClearStyleFilter()
+    {
+        StyleSlug = null;
+        StyleName = "";
+        Nav.NavigateTo("/items");
     }
 
 
@@ -293,7 +318,12 @@
 
     private void Go(int id)
     {
-        Nav.NavigateTo($"/product/{id}");
+        Nav.NavigateTo($"/product/{id}?from={Uri.EscapeDataString(Nav.Uri)}");
+    }
+
+    private void ToggleMobileMenu()
+    {
+        _mobileMenuOpen = !_mobileMenuOpen;
     }
 
 }

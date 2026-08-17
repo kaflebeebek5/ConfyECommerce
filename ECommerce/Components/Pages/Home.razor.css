@@ -1,221 +1,143 @@
 ﻿/* =========================================================
-   KLOBYTE SHOP
+   SHOP PAGE — Comfy Wear (olive/marigold palette)
    ========================================================= */
 
+:deep(article.content) {
+    padding-top: 0 !important;
+}
+
 .mk-page {
-    --brand: #082B4C;
-    --brand-dark: #061F38;
-    --accent: #F45112;
-    --accent-hover: #D94308;
-    --ink: #17202A;
-    --muted: #777F87;
-    --border: #E4E7EA;
-    --bg: #F7F8FA;
+    --brand: #11346f;
+    --accent: #D98E2B;
+    --ink: #221F1A;
+    --muted: #8A8272;
+    --border: #E4E0D8;
+    --bg: #FBF7F1;
     --card-bg: #FFFFFF;
-    --success: #28A866;
-    --danger: #D93025;
+    --success: #2E9E5B;
+    --danger: #C1440E;
     min-height: 100vh;
     background: var(--bg);
     color: var(--ink);
-    font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    margin-left: -32px;
-    margin-right: -24px;
-    margin-top: -18px;
-}
-
-
-/* =========================================================
-   HEADER
-   ========================================================= */
-
-.mk-topbar {
-    height: 58px;
-    background: linear-gradient( 90deg, #062642 0%, #082F53 100% );
-    position: sticky;
-    top: 0;
-    z-index: 100000;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
-}
-
-
-.mk-topbar-inner {
-    height: 100%;
-    padding: 0 22px;
+    font-family: 'Poppins', -apple-system, sans-serif;
     display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 30px;
+    flex-direction: column;
 }
-
-
-/* =========================================================
-   LOGO
-   ========================================================= */
-
-.mk-logo {
-    display: flex;
-    align-items: center;
-    gap: 7px;
-    color: #FFFFFF;
-    flex-shrink: 0;
-}
-
-
-.mk-logo-icon {
-    width: 25px;
-    height: 25px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-
-.mk-logo-text {
-    font-size: 21px;
-    font-weight: 700;
-    letter-spacing: -0.5px;
-}
-
-
-/* =========================================================
-   SEARCH - PUSHED TO RIGHT
-   ========================================================= */
-
-.mk-search {
-    width: 100%;
-    max-width: 350px;
-    height: 37px;
-    display: flex;
-    margin-left: auto;
-    background: #FFFFFF;
-    border-radius: 5px;
-    overflow: hidden;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
-}
-
-
-    .mk-search input {
-        flex: 1;
-        min-width: 0;
-        border: none;
-        outline: none;
-        padding: 0 14px;
-        font-size: 13px;
-        font-family: inherit;
-        color: var(--ink);
-        background: #FFFFFF;
-    }
-
-
-        .mk-search input::placeholder {
-            color: #858B91;
-        }
-
-
-.mk-search-btn {
-    width: 44px;
-    flex-shrink: 0;
-    border: none;
-    background: #123D63;
-    color: #FFFFFF;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: background 0.2s ease;
-}
-
-
-    .mk-search-btn:hover {
-        background: var(--accent);
-    }
-
 
 /* =========================================================
    BODY
    ========================================================= */
+.mk-filter-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 20px;
+    margin: 0 20px 8px;
+    background: linear-gradient(135deg, #33422E 0%, #3d5036 100%);
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(51, 66, 46, 0.15);
+}
+
+.mk-filter-label {
+    color: rgba(251, 247, 241, 0.8);
+    font-size: 0.85rem;
+}
+
+.mk-filter-label strong {
+    color: #D98E2B;
+    font-weight: 700;
+}
+
+.mk-filter-clear {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 5px 12px;
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 5px;
+    color: #FBF7F1;
+    font-size: 0.76rem;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    transition: background 0.15s;
+}
+
+.mk-filter-clear:hover {
+    background: rgba(255, 255, 255, 0.22);
+}
 
 .mk-body {
     width: 100%;
     margin: 0 auto;
-    padding: 16px 20px 30px;
+    padding: 1.25rem 1.5rem 3rem;
     box-sizing: border-box;
+    flex: 1;
 }
-
 
 /* =========================================================
    PRODUCT GRID
    ========================================================= */
-
 .mk-grid {
     display: grid;
-    grid-template-columns: repeat(6, minmax(0, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
     gap: 16px;
 }
-
 
 /* =========================================================
    PRODUCT CARD
    ========================================================= */
-
 .mk-card {
     position: relative;
     min-width: 0;
     background: var(--card-bg);
-    border: 1px solid #E1E4E7;
-    border-radius: 5px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
     overflow: hidden;
     cursor: pointer;
-    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
 }
 
-
-    .mk-card:hover {
-        transform: translateY(-3px);
-        border-color: #D4D9DE;
-        box-shadow: 0 7px 20px rgba(0, 0, 0, 0.10);
-    }
-
+.mk-card:hover {
+    transform: translateY(-4px);
+    border-color: var(--accent);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+}
 
 /* =========================================================
    IMAGE
    ========================================================= */
-
 .mk-media {
     position: relative;
     width: 100%;
     aspect-ratio: 1 / 1;
-    background: #F3F4F6;
+    background: linear-gradient(145deg, #f5f0ea 0%, #ebe4da 100%);
     display: flex;
     align-items: center;
     justify-content: center;
     overflow: hidden;
-    border-bottom: 1px solid #E7E9EC;
 }
 
-
-    .mk-media img {
-        width: 100%;
-        height: 100%;
-        display: block;
-        object-fit: cover;
-        transition: transform 0.3s ease;
-    }
-
+.mk-media img {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+}
 
 .mk-card:hover .mk-media img {
-    transform: scale(1.025);
+    transform: scale(1.05);
 }
-
 
 .mk-img-muted {
     filter: grayscale(0.6);
     opacity: 0.55;
 }
 
-
 .mk-img-fallback {
-    color: #B8BEC5;
+    color: #c5bfb6;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -223,120 +145,105 @@
     height: 100%;
 }
 
-
 /* =========================================================
    BADGE
    ========================================================= */
-
 .mk-tag {
     position: absolute;
-    top: 9px;
-    left: 9px;
+    top: 10px;
+    left: 10px;
     z-index: 3;
-    padding: 4px 7px;
-    border-radius: 2px;
-    font-size: 9px;
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 0.65rem;
     font-weight: 700;
     line-height: 1;
     text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
-
 
 .mk-tag-new {
     color: #FFFFFF;
     background: var(--brand);
 }
 
-
 .mk-tag-out {
     color: #FFFFFF;
     background: var(--danger);
 }
 
-
 /* =========================================================
    FAVORITE
    ========================================================= */
-
 .mk-favorite {
     position: absolute;
-    top: 8px;
-    right: 8px;
+    top: 10px;
+    right: 10px;
     z-index: 4;
-    width: 26px;
-    height: 26px;
+    width: 30px;
+    height: 30px;
     border: none;
     border-radius: 50%;
-    background: rgba(255, 255, 255, 0.90);
-    color: #6D7379;
+    background: rgba(255, 255, 255, 0.9);
+    color: #9A9285;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
     padding: 0;
+    transition: all 0.2s ease;
+    backdrop-filter: blur(4px);
 }
 
-
-    .mk-favorite:hover {
-        color: var(--accent);
-        background: #FFFFFF;
-    }
-
+.mk-favorite:hover {
+    color: var(--accent);
+    background: #FFFFFF;
+    transform: scale(1.1);
+}
 
 /* =========================================================
    PRODUCT INFORMATION
    ========================================================= */
-
 .mk-info {
-    padding: 9px 10px 11px;
+    padding: 12px 14px 14px;
     background: #FFFFFF;
 }
 
-
-/* BRAND */
-
 .mk-brand {
-    font-size: 9px;
+    font-size: 0.65rem;
     line-height: 1.2;
     font-weight: 700;
     text-transform: uppercase;
-    color: #6D7379;
-    letter-spacing: 0.35px;
+    color: var(--accent);
+    letter-spacing: 0.8px;
     margin-bottom: 4px;
 }
 
-
-/* NAME */
-
 .mk-name {
-    font-size: 12px;
+    font-family: 'Fredoka', sans-serif;
+    font-size: 0.88rem;
     line-height: 1.35;
-    color: #1D252C;
+    color: var(--ink);
     font-weight: 500;
-    min-height: 32px;
+    min-height: 36px;
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
-    margin-bottom: 5px;
-}
-
-
-/* PRICE */
-
-.mk-price {
-    color: var(--accent);
-    font-size: 15px;
-    line-height: 1.2;
-    font-weight: 800;
     margin-bottom: 6px;
 }
 
+.mk-price {
+    color: var(--brand);
+    font-family: 'Fredoka', sans-serif;
+    font-size: 1rem;
+    line-height: 1.2;
+    font-weight: 600;
+}
 
 /* =========================================================
    STOCK + QUANTITY
    ========================================================= */
-
 .mk-stock-row {
     display: flex;
     align-items: center;
@@ -344,26 +251,17 @@
     gap: 8px;
 }
 
-
 .mk-stock {
     display: flex;
     align-items: center;
     gap: 5px;
-    font-size: 9px;
+    font-size: 0.68rem;
     line-height: 1.2;
     font-weight: 600;
 }
 
-
-.mk-stock-in {
-    color: var(--success);
-}
-
-
-.mk-stock-out {
-    color: var(--danger);
-}
-
+.mk-stock-in { color: var(--success); }
+.mk-stock-out { color: var(--danger); }
 
 .mk-stock-dot {
     width: 5px;
@@ -373,260 +271,97 @@
     background: currentColor;
 }
 
-
-/* QUANTITY */
-
 .mk-quantity {
     min-width: 28px;
     height: 18px;
     padding: 0 6px;
     border-radius: 20px;
-    background: #E6F6ED;
+    background: rgba(46, 158, 91, 0.1);
     color: var(--success);
-    font-size: 9px;
+    font-size: 0.65rem;
     font-weight: 700;
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
-
 /* =========================================================
    EMPTY
    ========================================================= */
-
 .mk-empty {
     min-height: 300px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 10px;
+    gap: 12px;
     color: var(--muted);
-    font-size: 14px;
+    font-size: 0.9rem;
 }
-
 
 .mk-empty-icon {
-    color: #AAB1B8;
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #f0ebe3 0%, #e4ddd2 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #c5bfb6;
 }
 
-
 /* =========================================================
-   LARGE DESKTOP
+   RESPONSIVE
    ========================================================= */
-
-@media (min-width: 1600px) {
-
+@media (max-width: 1200px) {
     .mk-grid {
-        gap: 20px;
-    }
-
-    .mk-body {
-        padding-left: 25px;
-        padding-right: 25px;
-    }
-}
-
-
-/* =========================================================
-   LAPTOP
-   ========================================================= */
-
-@media (max-width: 1250px) {
-
-    .mk-grid {
-        grid-template-columns: repeat(5, minmax(0, 1fr));
+        grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
         gap: 14px;
     }
 }
 
-
-/* =========================================================
-   SMALL LAPTOP / TABLET
-   ========================================================= */
-
-@media (max-width: 1050px) {
-
+@media (max-width: 900px) {
     .mk-grid {
-        grid-template-columns: repeat(4, minmax(0, 1fr));
-        gap: 14px;
-    }
-
-    .mk-topbar-inner {
-        padding: 0 18px;
-    }
-
-    .mk-search {
-        max-width: 500px;
-    }
-}
-
-
-/* =========================================================
-   TABLET
-   ========================================================= */
-
-@media (max-width: 800px) {
-
-    .mk-grid {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
         gap: 12px;
     }
 
     .mk-body {
-        padding: 12px;
-    }
-
-    .mk-topbar-inner {
-        padding: 0 14px;
-        gap: 20px;
-    }
-
-    .mk-search {
-        max-width: 430px;
+        padding: 1rem;
     }
 }
 
-
-/* =========================================================
-   MOBILE
-   ========================================================= */
-
 @media (max-width: 600px) {
-
-    .mk-topbar {
-        height: auto;
-        padding: 10px 0;
+    .mk-body {
+        padding: 0.75rem;
     }
-
-
-    .mk-topbar-inner {
-        height: auto;
-        display: flex;
-        flex-wrap: wrap;
-        gap: 10px;
-        padding: 0 12px;
-    }
-
-
-    .mk-logo {
-        height: 32px;
-    }
-
-
-    .mk-logo-text {
-        font-size: 19px;
-    }
-
-
-    .mk-search {
-        order: 3;
-        flex-basis: 100%;
-        width: 100%;
-        max-width: none;
-        height: 36px;
-        margin-left: 0;
-    }
-
 
     .mk-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-template-columns: repeat(2, 1fr);
         gap: 10px;
     }
 
-
-    .mk-body {
-        padding: 10px;
-    }
-
-
     .mk-info {
-        padding: 8px 9px 10px;
+        padding: 8px 10px 10px;
     }
-
 
     .mk-name {
-        font-size: 11px;
+        font-size: 0.8rem;
         min-height: 30px;
     }
 
-
-    .mk-price {
-        font-size: 14px;
+    .mk-brand {
+        font-size: 0.6rem;
     }
 }
 
-
-/* =========================================================
-   SMALL MOBILE
-   ========================================================= */
-
-@media (max-width: 400px) {
-
-    .mk-body {
-        padding: 8px;
-    }
-
-
+@media (max-width: 380px) {
     .mk-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-template-columns: repeat(2, 1fr);
         gap: 8px;
     }
 
-
-    .mk-brand {
-        font-size: 8px;
-    }
-
-
     .mk-name {
-        font-size: 10.5px;
-        min-height: 28px;
-    }
-
-
-    .mk-price {
-        font-size: 13px;
-    }
-
-
-    .mk-stock {
-        font-size: 8px;
-    }
-
-
-    .mk-quantity {
-        min-width: 25px;
-        height: 17px;
-        font-size: 8px;
-    }
-
-
-    .mk-tag {
-        top: 6px;
-        left: 6px;
-        font-size: 8px;
-        padding: 4px 5px;
-    }
-
-
-    .mk-favorite {
-        top: 5px;
-        right: 5px;
-        width: 23px;
-        height: 23px;
-    }
-}
-
-
-/* =========================================================
-   VERY SMALL DEVICES
-   ========================================================= */
-
-@media (max-width: 300px) {
-
-    .mk-grid {
-        grid-template-columns: 1fr;
+        font-size: 0.75rem;
     }
 }
