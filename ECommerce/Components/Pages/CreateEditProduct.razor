@@ -23,7 +23,7 @@
             </a>
         </div>
         <div class="site-header-right">
-            <span class="site-admin-badge">Admin</span>
+            @* <span class="site-admin-badge">Admin</span> *@
             <AuthStatus />
         </div>
     </div>
@@ -41,7 +41,7 @@
     <div class="ap-toolbar">
         <input class="ap-search" placeholder="Search by name or brand..."
                @bind="SearchTerm" @bind:event="oninput" />
-        <RadzenButton Text="+ Add Product" Click="@(() => OpenForm(null))" class="ap-add-btn" Style="background-color:#062847 !important" />
+        <RadzenButton Text="+ Add Product" Click="@(() => OpenForm(null))" class="ap-add-btn" Style="background-color:#11346f !important" />
     </div>
 
     @if (Loading)

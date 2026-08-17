@@ -25,6 +25,7 @@
     align-items: flex-start;
     justify-content: space-between;
     margin-bottom: 28px;
+    padding:10px;
 }
 
 .cp-back-btn {
@@ -134,7 +135,7 @@
     .ap-table thead th {
         text-align: left;
         padding: 14px 20px;
-        background: #062847 !important;
+        background: #11346f !important;
         color: white !important;
         font-weight: 700;
         font-size: 0.68rem;
