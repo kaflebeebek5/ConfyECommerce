@@ -25,6 +25,50 @@
 }
 
 /* =========================================================
+   FLOATING BACK BUTTON
+   ========================================================= */
+.mk-floating-back {
+    position: fixed;
+    top: 79px;
+    left: 24px;
+    z-index: 90;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: #ffffff;
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: var(--ink);
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    transition: all 0.25s ease;
+}
+
+.mk-floating-back:hover {
+    background: var(--brand);
+    color: #ffffff;
+    border-color: var(--brand);
+    transform: translateX(-3px);
+    box-shadow: 0 4px 16px rgba(51, 66, 46, 0.3);
+}
+
+@media (max-width: 600px) {
+    .mk-floating-back {
+        top: 64px;
+        left: 12px;
+        width: 36px;
+        height: 36px;
+    }
+
+    .mk-floating-back svg {
+        width: 16px;
+        height: 16px;
+    }
+}
+
+/* =========================================================
    BODY
    ========================================================= */
 .mk-filter-bar {
@@ -70,7 +114,7 @@
 
 .mk-body {
     width: 100%;
-    margin: 0 auto;
+    margin-top: 32px !important;
     padding: 1.25rem 1.5rem 3rem;
     box-sizing: border-box;
     flex: 1;

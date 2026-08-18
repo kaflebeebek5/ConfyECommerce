@@ -117,6 +117,13 @@ h1:focus {
     opacity: 0.9;
 }
 
+.site-logo-img {
+    height: 38px;
+    width: auto;
+    border-radius: 6px;
+    object-fit: contain;
+}
+
 .site-insta {
     display: inline-flex;
     align-items: center;
@@ -325,6 +332,10 @@ h1:focus {
 
     .site-logo {
         flex: unset;
+    }
+
+    .site-logo-img {
+        height: 32px;
     }
 
     .site-header-right {
