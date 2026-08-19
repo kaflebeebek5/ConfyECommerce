@@ -122,7 +122,7 @@
     background: #fff;
     border: 1px solid var(--border);
     border-radius: 8px;
-    overflow: hidden;
+    overflow-x: auto;
     box-shadow: 0 1px 2px rgba(20,20,40,0.03), 0 12px 32px -20px rgba(20,20,40,0.10);
 }
 
@@ -279,8 +279,8 @@
 }
 
 .ap-icon-btn {
-    width: 32px;
-    height: 32px;
+    width: 38px;
+    height: 38px;
     border: 1px solid var(--border);
     background: #fff;
     border-radius: 8px;
@@ -326,12 +326,12 @@
 }
 
 .ap-page-btn {
-    width: 30px;
-    height: 30px;
+    width: 36px;
+    height: 36px;
     border-radius: 7px;
     border: 1px solid var(--border);
     background: #fff;
-    font-size: 0.78rem;
+    font-size: 0.82rem;
     font-weight: 600;
     color: var(--ink);
     cursor: pointer;
@@ -366,6 +366,43 @@
     .ap-table thead th:nth-child(5), .ap-table tbody td:nth-child(5),
     .ap-table thead th:nth-child(6), .ap-table tbody td:nth-child(6) {
         display: none;
+    }
+
+    .ap-table thead th {
+        padding: 12px 14px;
+        font-size: 0.72rem;
+    }
+
+    .ap-table tbody td {
+        padding: 12px 14px;
+    }
+}
+
+@media (max-width: 600px) {
+    .ap-table thead th:nth-child(4), .ap-table tbody td:nth-child(4),
+    .ap-table thead th:nth-child(7), .ap-table tbody td:nth-child(7),
+    .ap-table thead th:nth-child(8), .ap-table tbody td:nth-child(8),
+    .ap-table thead th:nth-child(9), .ap-table tbody td:nth-child(9) {
+        display: none;
+    }
+
+    .ap-toolbar {
+        flex-direction: column;
+    }
+
+    .ap-search {
+        max-width: 100%;
+    }
+
+    .ap-header {
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .ap-table-footer {
+        flex-direction: column;
+        gap: 10px;
+        text-align: center;
     }
 }
 

@@ -126,8 +126,8 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 32px;
-    height: 32px;
+    width: 44px;
+    height: 44px;
     border-radius: 50%;
     background: linear-gradient(135deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
     color: #fff;
@@ -760,7 +760,7 @@
     font-size: 0.82rem;
     color: rgba(251, 247, 241, 0.45);
     text-decoration: none;
-    padding: 3px 0;
+    padding: 5px 0;
     transition: color 0.2s;
 }
 
@@ -922,8 +922,12 @@
     }
 
     .cw-footer-links {
-        grid-template-columns: repeat(3, 1fr);
+        grid-template-columns: 1fr 1fr;
         gap: 1rem;
+    }
+
+    .cw-section-title {
+        font-size: 1.8rem;
     }
 }
 
