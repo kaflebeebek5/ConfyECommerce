@@ -31,7 +31,7 @@
             if (file != null)
             {
                 var streamData = new MemoryStream(file);
-                var UploadFolder = Path.Combine( "D://Images");
+                var UploadFolder = OperatingSystem.IsWindows() ? @"D:\Images" : @"/var/www/ECommerceImages";
                 //var FileName = Guid.NewGuid().ToString() + "_";
                 var FullPath = Path.Combine(UploadFolder, FileName);
                 if (!Directory.Exists(UploadFolder))

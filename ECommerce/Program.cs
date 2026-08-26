@@ -68,7 +68,8 @@ app.MapStaticAssets();
 app.UseStaticFiles();
 app.UseStaticFiles(new StaticFileOptions
 {
-    FileProvider = new PhysicalFileProvider(@"D:\Images"),
+    FileProvider = new PhysicalFileProvider(
+        OperatingSystem.IsWindows() ? @"D:\Images" : @"/var/www/ECommerceImages"),
     RequestPath = "/Images"
 });
 
