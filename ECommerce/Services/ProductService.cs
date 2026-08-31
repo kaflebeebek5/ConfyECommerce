@@ -46,7 +46,8 @@ namespace ECommerce.Services
                 result.Add(new ECommerce.ViewModel.ProductImages
                 {
                     Id = item.Id,
-                    ImagePath = item.ImagePath
+                    ImagePath = item.ImagePath,
+                    Color = item.Color
                 });
             }
 
@@ -80,7 +81,8 @@ namespace ECommerce.Services
                 var ProductItem = new ECommerce.Entities.ProductImages
                 {
                     ProductID = product1.Id,
-                    ImagePath = items.ImagePath
+                    ImagePath = items.ImagePath,
+                    Color = items.Color
                 };
                 ProductImages.Add(ProductItem);
             }
@@ -117,7 +119,8 @@ namespace ECommerce.Services
                 var ProductItem = new ECommerce.Entities.ProductImages
                 {
                     ProductID = existing.Id,
-                    ImagePath = items.ImagePath
+                    ImagePath = items.ImagePath,
+                    Color = items.Color
                 };
                 ProductImages.Add(ProductItem);
             }
@@ -132,6 +135,10 @@ namespace ECommerce.Services
         {
             var product = await _context.Products.FindAsync(id);
             if (product is null) return false;
+
+            var images = await _context.ProductImages.Where(x => x.ProductID == id).ToListAsync();
+            if (images.Any())
+                _context.ProductImages.RemoveRange(images);
 
             _context.Products.Remove(product);
             await _context.SaveChangesAsync();

@@ -30,7 +30,8 @@
     public class ProductImages
     {
         public int Id { get; set; }
-        public string ImagePath { get; set; } = ""; // "/uploads/xxxx.jpg"
-        public string Extension { get; set; } = ""; // "/uploads/xxxx.jpg"
+        public string ImagePath { get; set; } = "";
+        public string Extension { get; set; } = "";
+        public string? Color { get; set; }
     }
 }

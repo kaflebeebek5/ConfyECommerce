@@ -22,7 +22,7 @@ namespace ECommerce.Services
         public async Task<List<Style>> GetAllAsync()
         {
             return await _context.Styles
-                .OrderBy(s => s.Name)
+                //.OrderBy(s => s.Name)
                 .AsNoTracking()
                 .ToListAsync();
         }

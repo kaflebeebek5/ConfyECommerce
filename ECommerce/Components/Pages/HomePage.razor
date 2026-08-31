@@ -107,7 +107,7 @@
 
     <!-- ==================== TRUST STRIP ==================== -->
     <div class="cw-trust-strip">
-        <div class="cw-trust-inner">
+        <div class="cw-trust-track">
             @foreach (var item in TrustItems)
             {
                 <span class="cw-trust-item">
@@ -116,6 +116,7 @@
                     </svg>
                     @item.Label
                 </span>
+                <span class="cw-trust-sep">&#x2022;</span>
             }
         </div>
     </div>

@@ -88,10 +88,17 @@ else
 
             <!-- GALLERY -->
             <div class="pd-gallery">
+                @if (!string.IsNullOrEmpty(selectedColor))
+                {
+                    <div class="pd-color-badge">
+                        <span class="pd-color-badge-dot" style="background:@ColorToHex(selectedColor)"></span>
+                        @selectedColor
+                    </div>
+                }
                 <div class="pd-main-image" @onclick="OpenLightbox">
-                    @if (productImages != null && productImages.Count > 0)
+                    @if (displayImages != null && displayImages.Count > 0)
                     {
-                        var img = productImages[selectedImageIndex];
+                        var img = displayImages[selectedImageIndex];
                         @if (!string.IsNullOrWhiteSpace(img.ImagePath))
                         {
                             <img src="@img.ImagePath" alt="@Product.Name" />
@@ -104,11 +111,11 @@ else
                                     <circle cx="22" cy="24" r="5" />
                                     <path d="M8 44l14-14 10 10 8-8 16 16" />
                                 </svg>
-    </div>
-}
-                        @if (productImages.Count > 1)
+                            </div>
+                        }
+                        @if (displayImages.Count > 1)
                         {
-                            <span class="pd-img-counter">@(selectedImageIndex + 1) / @productImages.Count</span>
+                            <span class="pd-img-counter">@(selectedImageIndex + 1) / @displayImages.Count</span>
                         }
                         <div class="pd-img-zoom">
                             <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
@@ -129,19 +136,19 @@ else
                     }
                 </div>
 
-                @if (productImages != null && productImages.Count > 1)
+                @if (displayImages != null && displayImages.Count > 1)
                 {
                     <div class="pd-thumbs">
-                        @for (int i = 0; i < productImages.Count; i++)
+                        @for (int i = 0; i < displayImages.Count; i++)
                         {
                             var idx = i;
                             <button type="button"
                                     class="pd-thumb @(selectedImageIndex == idx ? "pd-thumb-active" : "")"
                                     @onclick="() => SelectImage(idx)"
                                     @onclick:stopPropagation="true">
-                                @if (!string.IsNullOrWhiteSpace(productImages[idx].ImagePath))
+                                @if (!string.IsNullOrWhiteSpace(displayImages[idx].ImagePath))
                                 {
-                                    <img src="@productImages[idx].ImagePath" alt="" />
+                                    <img src="@displayImages[idx].ImagePath" alt="" />
                                 }
                             </button>
                         }
@@ -188,19 +195,28 @@ else
                             </div>
                         </div>
                     }
-                    @if (!string.IsNullOrWhiteSpace(Product.Color))
+                    @if (ProductColors.Any())
                     {
                         <div class="pd-qs">
                             <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="13.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="10.5" r="2.5"/><circle cx="8.5" cy="7.5" r="2.5"/><circle cx="6.5" cy="12" r="2.5"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.9 0 1.7-.8 1.7-1.7 0-.5-.2-.9-.5-1.2-.3-.3-.5-.7-.5-1.2 0-.9.8-1.7 1.7-1.7H16c3.3 0 6-2.7 6-6 0-5.5-4.5-9-10-9z"/></svg>
                             <div>
                                 <span class="pd-qs-label">Colors</span>
-                                <span class="pd-qs-value">
-                                    @foreach (var c in Colors)
+                                <div class="pd-color-swatches">
+                                    <button class="@("pd-swatch-btn" + (string.IsNullOrEmpty(selectedColor) ? " pd-swatch-active" : ""))"
+                                            @onclick="@(() => SelectColor(null))">
+                                        <svg class="pd-swatch-check" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+                                        All
+                                    </button>
+                                    @foreach (var c in ProductColors)
                                     {
-                                        <span class="pd-swatch-sm" style="background:@ColorToHex(c)"></span>
+                                        <button class="@("pd-swatch-btn" + (string.Equals(selectedColor, c, StringComparison.OrdinalIgnoreCase) ? " pd-swatch-active" : ""))"
+                                                @onclick="@(() => SelectColor(c))">
+                                            <span class="pd-swatch-dot" style="background:@ColorToHex(c)"></span>
+                                            @c
+                                            <svg class="pd-swatch-check" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+                                        </button>
                                     }
-                                    @Product.Color
-                                </span>
+                                </div>
                             </div>
                         </div>
                     }
@@ -245,7 +261,7 @@ else
         </div>
 
         <!-- LIGHTBOX -->
-        @if (LightboxOpen && productImages != null && productImages.Count > 0)
+        @if (LightboxOpen && displayImages != null && displayImages.Count > 0)
         {
             <div class="pd-lightbox" @onclick="CloseLightbox">
                 <button class="pd-lb-close" @onclick="CloseLightbox" @onclick:stopPropagation="true">
@@ -254,7 +270,7 @@ else
                     </svg>
                 </button>
 
-                @if (productImages.Count > 1)
+                @if (displayImages.Count > 1)
                 {
                     <button class="pd-lb-arrow pd-lb-prev" @onclick="PrevImage" @onclick:stopPropagation="true">
                         <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5">
@@ -263,9 +279,9 @@ else
                     </button>
                 }
 
-                <img src="@productImages[selectedImageIndex].ImagePath" alt="@Product.Name" @onclick:stopPropagation="true" />
+                <img src="@displayImages[selectedImageIndex].ImagePath" alt="@Product.Name" @onclick:stopPropagation="true" />
 
-                @if (productImages.Count > 1)
+                @if (displayImages.Count > 1)
                 {
                     <button class="pd-lb-arrow pd-lb-next" @onclick="NextImage" @onclick:stopPropagation="true">
                         <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5">
@@ -274,7 +290,7 @@ else
                     </button>
                 }
 
-                <span class="pd-lb-counter">@(selectedImageIndex + 1) / @productImages.Count</span>
+                <span class="pd-lb-counter">@(selectedImageIndex + 1) / @displayImages.Count</span>
             </div>
         }
 
@@ -292,31 +308,44 @@ else
     private bool LightboxOpen = false;
     private bool _mobileMenuOpen = false;
     private List<ECommerce.ViewModel.ProductImages> productImages = new();
-    private string[] Colors = Array.Empty<string>();
+    private string? selectedColor;
+    private List<string> ProductColors = new();
+
+    private List<ECommerce.ViewModel.ProductImages> displayImages =>
+        string.IsNullOrEmpty(selectedColor)
+            ? productImages
+            : productImages.Where(x => string.Equals(x.Color, selectedColor, StringComparison.OrdinalIgnoreCase)).ToList();
 
     protected override async Task OnParametersSetAsync()
     {
         Loading = true;
         selectedImageIndex = 0;
         LightboxOpen = false;
+        selectedColor = null;
 
         var all = await ProductService.GetAllAsync();
         Product = all.FirstOrDefault(p => p.Id == Id);
         productImages = await ProductService.GetByIdAsync(Id);
 
-        if (Product is not null && !string.IsNullOrWhiteSpace(Product.Color))
-        {
-            Colors = Product.Color.Split(
-                new[] { ',', '-' },
-                StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
-        }
+        ProductColors = productImages
+            .Where(x => !string.IsNullOrWhiteSpace(x.Color))
+            .Select(x => x.Color!)
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .ToList();
 
         Loading = false;
     }
 
+    private void SelectColor(string? color)
+    {
+        selectedColor = color;
+        selectedImageIndex = 0;
+    }
+
     private void SelectImage(int index)
     {
-        if (productImages is null || index < 0 || index >= productImages.Count) return;
+        var images = displayImages;
+        if (images is null || index < 0 || index >= images.Count) return;
         selectedImageIndex = index;
     }
 
@@ -325,14 +354,16 @@ else
 
     private void PrevImage()
     {
-        if (productImages is null || productImages.Count == 0) return;
-        selectedImageIndex = (selectedImageIndex - 1 + productImages.Count) % productImages.Count;
+        var images = displayImages;
+        if (images is null || images.Count == 0) return;
+        selectedImageIndex = (selectedImageIndex - 1 + images.Count) % images.Count;
     }
 
     private void NextImage()
     {
-        if (productImages is null || productImages.Count == 0) return;
-        selectedImageIndex = (selectedImageIndex + 1) % productImages.Count;
+        var images = displayImages;
+        if (images is null || images.Count == 0) return;
+        selectedImageIndex = (selectedImageIndex + 1) % images.Count;
     }
 
     private static string ColorToHex(string color)

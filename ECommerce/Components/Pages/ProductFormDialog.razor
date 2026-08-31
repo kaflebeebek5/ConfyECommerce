@@ -82,61 +82,170 @@
             </div>
         </div>
 
-        <div class="pf-row">
-            <div class="pf-field">
-                <label class="pf-label">Size <span class="pf-hint">(CSV or range)</span></label>
-                <input class="pf-input" @bind="Model.Size" placeholder="e.g. 38,39,40,41" />
-            </div>
-            <div class="pf-field">
-                <label class="pf-label">Color</label>
-                <input class="pf-input" @bind="Model.Color" placeholder="e.g. Tan, Black" />
-            </div>
+        <div class="pf-field">
+            <label class="pf-label">Size <span class="pf-hint">(CSV or range)</span></label>
+            <input class="pf-input" @bind="Model.Size" placeholder="e.g. 38,39,40,41" />
         </div>
 
-        <div class="pf-gallery-section">
-            <label class="pf-gallery-label">Product Images <span class="pf-required">*</span></label>
+        <!-- ==================== COVER IMAGE ==================== -->
+        <div class="pf-cover-section">
+            <div class="pf-section-header">
+                <div class="pf-section-icon pf-section-icon-cover">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+                        <circle cx="8.5" cy="8.5" r="1.5" />
+                        <polyline points="21 15 16 10 5 21" />
+                    </svg>
+                </div>
+                <div>
+                    <span class="pf-section-title">Cover Image <span class="pf-required">*</span></span>
+                    <span class="pf-section-sub">Main product image shown in listings</span>
+                </div>
+            </div>
 
-            <div class="pf-gallery-grid">
-                @for (int i = 0; i < Model.ProductImages.Count; i++)
+            <div class="pf-cover-upload-area">
+                @if (GetCoverImages().Any())
                 {
-                    var index = i;
-                    var img = Model.ProductImages[index];
-                    var isExisting = img.Id != 0;
-
-                    <div class="@("pf-gallery-item" + (isExisting ? " pf-gallery-item-existing" : ""))">
-                        <img src="@GetPreviewSrc(img)" alt="Product image" />
-                        <button type="button" class="pf-gallery-remove" @onclick="@(() => RemoveImage(index))">
-                            <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="3">
+                    var cover = GetCoverImages().First();
+                    <div class="pf-cover-preview">
+                        <img src="@GetPreviewSrc(cover)" alt="Cover" />
+                        <button type="button" class="pf-cover-remove" @onclick="@(() => RemoveCoverImage())">
+                            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5">
                                 <line x1="18" y1="6" x2="6" y2="18" />
                                 <line x1="6" y1="6" x2="18" y2="18" />
                             </svg>
                         </button>
-                        @if (isExisting)
-                        {
-                            <span class="pf-gallery-tag pf-gallery-existing-tag">Saved</span>
-                        }
-                        else if (index == 0)
-                        {
-                            <span class="pf-gallery-tag pf-gallery-cover-tag">Cover</span>
-                        }
+                        <span class="pf-cover-badge">Cover</span>
+                    </div>
+                    <div class="pf-cover-change">
+                        <InputFile OnChange="OnCoverSelected" accept="image/*" class="pf-file-input" id="pf-cover-input" style="display:none" />
+                        <label for="pf-cover-input" class="pf-cover-change-btn">
+                            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M12 20h9" />
+                                <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z" />
+                            </svg>
+                            Change Cover
+                        </label>
                     </div>
                 }
-
-                <InputFile OnChange="OnFilesSelected" multiple accept="image/*" class="pf-file-input" id="pf-file-input" style="display:none" />
-                <label for="pf-file-input" class="pf-gallery-add">
-                    <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.6">
-                        <line x1="12" y1="5" x2="12" y2="19" />
-                        <line x1="5" y1="12" x2="19" y2="12" />
-                    </svg>
-                    <span>Add Images</span>
-                </label>
+                else
+                {
+                    <InputFile OnChange="OnCoverSelected" accept="image/*" class="pf-file-input" id="pf-cover-input-empty" style="display:none" />
+                    <label for="pf-cover-input-empty" class="pf-cover-empty">
+                        <div class="pf-cover-empty-icon">
+                            <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+                                <circle cx="8.5" cy="8.5" r="1.5" />
+                                <polyline points="21 15 16 10 5 21" />
+                            </svg>
+                        </div>
+                        <span class="pf-cover-empty-text">Click to upload cover image</span>
+                        <span class="pf-cover-empty-hint">JPG, PNG up to 4MB</span>
+                    </label>
+                }
             </div>
+        </div>
+
+        <!-- ==================== COLOR VARIANTS ==================== -->
+        <div class="pf-colors-section">
+            <div class="pf-section-header">
+                <div class="pf-section-icon pf-section-icon-color">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="13.5" cy="6.5" r="2.5" /><circle cx="17.5" cy="10.5" r="2.5" />
+                        <circle cx="8.5" cy="7.5" r="2.5" /><circle cx="6.5" cy="12" r="2.5" />
+                        <path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.9 0 1.7-.8 1.7-1.7 0-.5-.2-.9-.5-1.2-.3-.3-.5-.7-.5-1.2 0-.9.8-1.7 1.7-1.7H16c3.3 0 6-2.7 6-6 0-5.5-4.5-9-10-9z" />
+                    </svg>
+                </div>
+                <div>
+                    <span class="pf-section-title">Color Variants</span>
+                    <span class="pf-section-sub">Upload images for each color option</span>
+                </div>
+            </div>
+
+            @if (ColorGroups.Any())
+            {
+                @for (int gi = 0; gi < ColorGroups.Count; gi++)
+                {
+                    var groupIdx = gi;
+                    var group = ColorGroups[groupIdx];
+                    var colorImages = GetImagesForColor(group.ColorName);
+
+                    <div class="pf-color-group">
+                        <div class="pf-color-group-header">
+                            <div class="pf-color-dot" style="background:@ColorToHex(group.ColorName)"></div>
+                            <input class="pf-color-name-input" value="@group.ColorName"
+                                   @oninput="@((e) => OnColorNameChanged(groupIdx, e))"
+                                   placeholder="e.g. Tan, Black, Navy" />
+                            <button type="button" class="pf-color-remove-btn" @onclick="@(() => RemoveColorGroup(groupIdx))">
+                                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="3 6 5 6 21 6" />
+                                    <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
+                                </svg>
+                                Remove
+                            </button>
+                        </div>
+
+                        <div class="pf-color-images-grid">
+                            @for (int ii = 0; ii < colorImages.Count; ii++)
+                            {
+                                var imgIdx = ii;
+                                var img = colorImages[imgIdx];
+                                var isExisting = img.Id != 0;
+
+                                <div class="@("pf-color-img-item" + (isExisting ? " pf-color-img-existing" : ""))">
+                                    <img src="@GetPreviewSrc(img)" alt="@group.ColorName image" />
+                                    <button type="button" class="pf-color-img-remove" @onclick="@(() => RemoveColorImage(group.ColorName, imgIdx))">
+                                        <svg viewBox="0 0 24 24" width="10" height="10" fill="none" stroke="currentColor" stroke-width="3">
+                                            <line x1="18" y1="6" x2="6" y2="18" />
+                                            <line x1="6" y1="6" x2="18" y2="18" />
+                                        </svg>
+                                    </button>
+                                    @if (isExisting)
+                                    {
+                                        <span class="pf-color-img-tag">Saved</span>
+                                    }
+                                </div>
+                            }
+
+                            <InputFile OnChange="@((e) => OnColorFilesSelected(groupIdx, e))"
+                                       multiple accept="image/*"
+                                       class="pf-file-input" id="@($"pf-color-input-{groupIdx}")" style="display:none" />
+                            <label for="@($"pf-color-input-{groupIdx}")" class="pf-color-img-add">
+                                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8">
+                                    <line x1="12" y1="5" x2="12" y2="19" />
+                                    <line x1="5" y1="12" x2="19" y2="12" />
+                                </svg>
+                                <span>Add</span>
+                            </label>
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="pf-colors-empty">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <circle cx="12" cy="12" r="10" />
+                        <line x1="12" y1="8" x2="12" y2="16" />
+                        <line x1="8" y1="12" x2="16" y2="12" />
+                    </svg>
+                    <span>No color variants added yet. Click below to add colors and upload images for each.</span>
+                </div>
+            }
+
+            <button type="button" class="pf-add-color-btn" @onclick="AddColorGroup">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="12" y1="5" x2="12" y2="19" />
+                    <line x1="5" y1="12" x2="19" y2="12" />
+                </svg>
+                Add Color Variant
+            </button>
 
             @if (ImageError is not null)
             {
                 <div class="pf-field-error" style="margin-top:8px">@ImageError</div>
             }
-            <div class="pf-gallery-hint">First image is the cover. Max @MaxImages images, @(MaxFileSizeBytes / (1024 * 1024)) MB each.</div>
+            <div class="pf-gallery-hint">Max @(MaxImages) total images across all colors, @(MaxFileSizeBytes / (1024 * 1024)) MB each.</div>
         </div>
     </div>
 
@@ -172,15 +281,20 @@
     private ProductModel Model = new();
     private List<Style> Styles = new();
 
-    private List<int> OriginalImageIds = new();
-
     private string? ImageError;
     private string? SaveError;
     private bool ShowValidation;
     private bool Saving;
 
-    private const int MaxImages = 8;
+    private const int MaxImages = 20;
     private const long MaxFileSizeBytes = 4 * 1024 * 1024;
+
+    private List<ColorImageGroup> ColorGroups = new();
+
+    private class ColorImageGroup
+    {
+        public string ColorName { get; set; } = "";
+    }
 
     private string StyleIdStr
     {
@@ -217,29 +331,162 @@
 
             var existing = await ProductService.GetByIdAsync(Existing.Id);
             Model.ProductImages = existing ?? new();
+
+            var colorNames = Model.ProductImages
+                .Where(x => !string.IsNullOrWhiteSpace(x.Color))
+                .Select(x => x.Color!)
+                .Distinct()
+                .ToList();
+
+            foreach (var c in colorNames)
+            {
+                ColorGroups.Add(new ColorImageGroup { ColorName = c });
+            }
         }
+    }
+
+    private List<ECommerce.ViewModel.ProductImages> GetCoverImages()
+    {
+        return Model.ProductImages
+            .Where(x => string.IsNullOrWhiteSpace(x.Color))
+            .ToList();
+    }
+
+    private List<ECommerce.ViewModel.ProductImages> GetImagesForColor(string colorName)
+    {
+        return Model.ProductImages
+            .Where(x => string.Equals(x.Color, colorName, StringComparison.OrdinalIgnoreCase))
+            .ToList();
     }
 
     private string GetPreviewSrc(ECommerce.ViewModel.ProductImages img)
     {
-       return img.ImagePath;
+        return img.ImagePath;
     }
 
-    private async Task OnFilesSelected(InputFileChangeEventArgs e)
+    private void RemoveCoverImage()
+    {
+        var coverImages = GetCoverImages();
+        if (!coverImages.Any()) return;
+
+        var imgToRemove = coverImages.First();
+        var idx = Model.ProductImages.IndexOf(imgToRemove);
+        if (idx >= 0)
+            Model.ProductImages.RemoveAt(idx);
+    }
+
+    private void RemoveColorImage(string colorName, int filteredIndex)
+    {
+        var colorImages = GetImagesForColor(colorName);
+        if (filteredIndex < 0 || filteredIndex >= colorImages.Count) return;
+
+        var imgToRemove = colorImages[filteredIndex];
+        var idx = Model.ProductImages.IndexOf(imgToRemove);
+        if (idx >= 0)
+            Model.ProductImages.RemoveAt(idx);
+    }
+
+    private void AddColorGroup()
+    {
+        ColorGroups.Add(new ColorImageGroup { ColorName = "" });
+    }
+
+    private void RemoveColorGroup(int groupIndex)
+    {
+        if (groupIndex < 0 || groupIndex >= ColorGroups.Count) return;
+
+        var colorName = ColorGroups[groupIndex].ColorName;
+        Model.ProductImages.RemoveAll(x =>
+            string.Equals(x.Color, colorName, StringComparison.OrdinalIgnoreCase));
+        ColorGroups.RemoveAt(groupIndex);
+    }
+
+    private void OnColorNameChanged(int groupIndex, ChangeEventArgs e)
+    {
+        if (groupIndex < 0 || groupIndex >= ColorGroups.Count) return;
+
+        var oldName = ColorGroups[groupIndex].ColorName;
+        var newName = e.Value?.ToString()?.Trim() ?? "";
+
+        ColorGroups[groupIndex].ColorName = newName;
+
+        foreach (var img in Model.ProductImages)
+        {
+            if (string.Equals(img.Color, oldName, StringComparison.OrdinalIgnoreCase))
+            {
+                img.Color = newName;
+            }
+        }
+    }
+
+    private async Task OnCoverSelected(InputFileChangeEventArgs e)
+    {
+        ImageError = null;
+        var file = e.File;
+        if (file is null) return;
+
+        if (file.Size > MaxFileSizeBytes)
+        {
+            ImageError = $"Cover image is larger than {MaxFileSizeBytes / (1024 * 1024)} MB.";
+            return;
+        }
+
+        var existingCover = GetCoverImages();
+        if (existingCover.Any())
+        {
+            var imgToRemove = existingCover.First();
+            var idx = Model.ProductImages.IndexOf(imgToRemove);
+            if (idx >= 0) Model.ProductImages.RemoveAt(idx);
+        }
+
+        try
+        {
+            using var stream = file.OpenReadStream(MaxFileSizeBytes);
+            using var ms = new MemoryStream();
+            await stream.CopyToAsync(ms);
+            var bytes = ms.ToArray();
+            var extension = Path.GetExtension(file.Name).TrimStart('.').ToLowerInvariant();
+            if (string.IsNullOrWhiteSpace(extension)) extension = "jpg";
+
+            Model.ProductImages.Insert(0, new ECommerce.ViewModel.ProductImages
+            {
+                Id = 0,
+                ImagePath = $"data:{file.ContentType};base64,{Convert.ToBase64String(bytes)}",
+                Extension = extension,
+                Color = null
+            });
+        }
+        catch (Exception)
+        {
+            ImageError = "Could not read the cover image. Try a different file.";
+        }
+    }
+
+    private async Task OnColorFilesSelected(int groupIndex, InputFileChangeEventArgs e)
     {
         ImageError = null;
 
-        var remainingSlots = MaxImages - Model.ProductImages.Count;
+        if (groupIndex < 0 || groupIndex >= ColorGroups.Count) return;
+
+        var colorName = ColorGroups[groupIndex].ColorName;
+        if (string.IsNullOrWhiteSpace(colorName))
+        {
+            ImageError = "Please enter a color name before uploading images.";
+            return;
+        }
+
+        var totalCount = Model.ProductImages.Count;
+        var remainingSlots = MaxImages - totalCount;
         if (remainingSlots <= 0)
         {
-            ImageError = $"You can only have up to {MaxImages} images.";
+            ImageError = $"Maximum {MaxImages} images reached.";
             return;
         }
 
         var files = e.GetMultipleFiles(MaxImages).Take(remainingSlots).ToList();
         if (e.FileCount > remainingSlots)
         {
-            ImageError = $"Only {remainingSlots} more image(s) can be added (max {MaxImages} total). The rest were skipped.";
+            ImageError = $"Only {remainingSlots} more image(s) can be added. The rest were skipped.";
         }
 
         foreach (var file in files)
@@ -256,15 +503,15 @@
                 using var ms = new MemoryStream();
                 await stream.CopyToAsync(ms);
                 var bytes = ms.ToArray();
-
                 var extension = Path.GetExtension(file.Name).TrimStart('.').ToLowerInvariant();
                 if (string.IsNullOrWhiteSpace(extension)) extension = "jpg";
 
                 Model.ProductImages.Add(new ECommerce.ViewModel.ProductImages
                 {
                     Id = 0,
-                    ImagePath =  $"data:{file.ContentType};base64,{Convert.ToBase64String(bytes)}",
-                    Extension = extension
+                    ImagePath = $"data:{file.ContentType};base64,{Convert.ToBase64String(bytes)}",
+                    Extension = extension,
+                    Color = colorName
                 });
             }
             catch (Exception)
@@ -272,11 +519,6 @@
                 ImageError = $"Could not read \"{file.Name}\". Try a different image.";
             }
         }
-    }
-
-    private void RemoveImage(int index)
-    {
-        Model.ProductImages.RemoveAt(index);
     }
 
     private bool IsValid() =>
@@ -335,4 +577,30 @@
     }
 
     private void Cancel() => DialogService.Close(false);
+
+    private static string ColorToHex(string color)
+    {
+        return (color ?? "").Trim().ToLowerInvariant() switch
+        {
+            "blue" => "#28548A",
+            "navy" => "#082B4C",
+            "tan" => "#C8A165",
+            "olive" => "#5C6B3F",
+            "rust" => "#C1440E",
+            "grey" or "gray" => "#8A8272",
+            "black" => "#171717",
+            "brown" => "#6B4A2E",
+            "white" => "#F5F5F5",
+            "red" => "#D93025",
+            "green" => "#2E9E5B",
+            "yellow" => "#E4B72C",
+            "maroon" => "#800000",
+            "pink" => "#E91E8C",
+            "beige" => "#D5C4A1",
+            "cream" => "#FFFDD0",
+            "gold" => "#D4AF37",
+            "silver" => "#C0C0C0",
+            _ => "#B08D57"
+        };
+    }
 }
