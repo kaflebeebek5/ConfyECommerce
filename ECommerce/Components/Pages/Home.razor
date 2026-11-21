@@ -3,8 +3,9 @@
 @inject ECommerce.Services.IProductService ProductService
 @inject ECommerce.Services.IStyleService StyleService
 @inject NavigationManager Nav
+@inject IJSRuntime JS
 
-<div class="mk-page">
+<div class="mk-page @(_mobileFilterOpen ? "mk-filter-open" : "")">
 
     <!-- ================= HEADER ================= -->
     <header class="site-header">
@@ -19,14 +20,14 @@
 
             <div class="site-header-left">
                 <a href="/" class="site-logo">
-                    <a href="https://www.instagram.com/comfywear____?igsh=MTF0aXk3dWJlMHkwNA==" target="_blank" rel="noopener noreferrer" class="site-insta">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
-                            <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
-                            <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
-                        </svg>
-                    </a>
-                    <p style="color:white;margin-top: 15px;">comfy wear</p>
+                    <img src="/images/comfy-wear-logo.jpeg" alt="COMFY WEAR" class="site-logo-img" />
+                </a>
+                <a href="https://www.instagram.com/comfywear____?igsh=MTF0aXk3dWJlMHkwNA==" target="_blank" rel="noopener noreferrer" class="site-insta">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+                        <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+                        <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
+                    </svg>
                 </a>
 
                 <nav class="site-nav @(_mobileMenuOpen ? "site-nav-open" : "")">
@@ -52,212 +53,369 @@
         </div>
     </header>
 
-    <!-- FLOATING BACK BUTTON -->
-    <button class="mk-floating-back" @onclick="@(() => Nav.NavigateTo("/"))">
-        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5">
-            <line x1="19" y1="12" x2="5" y2="12" />
-            <polyline points="12 19 5 12 12 5" />
+    <!-- ================= MOBILE FILTER TRIGGER ================= -->
+    <button class="mk-mobile-filter-btn" @onclick="ToggleMobileFilter">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10" /><line x1="12" y1="8" x2="12" y2="16" /><line x1="8" y1="12" x2="16" y2="12" />
         </svg>
+        <span>@(HasAnyFilter ? "Filters (" + FilterCount + ")" : "FILTER & SORT")</span>
+        @if (HasAnyFilter)
+        {
+            <span class="mk-filter-count">@FilterCount</span>
+        }
     </button>
 
-    <!-- ================= PRODUCTS ================= -->
-    <main class="mk-body">
-
-       @*  @if (!string.IsNullOrWhiteSpace(StyleSlug))
-        {
-            <div class="mk-filter-bar">
-                <span class="mk-filter-label">
-                    Showing: <strong>@StyleName</strong>
-                </span>
-                <button class="mk-filter-clear" @onclick="ClearStyleFilter">
-                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5">
-                        <line x1="18" y1="6" x2="6" y2="18" />
-                        <line x1="6" y1="6" x2="18" y2="18" />
+    <!-- ================= MOBILE FILTER PANEL ================= -->
+    @if (_mobileFilterOpen)
+    {
+        <div class="mk-mobile-filter-overlay" @onclick="ToggleMobileFilter"></div>
+        <div class="mk-mobile-filter-panel @(_mobileFilterOpen ? "open" : "")">
+            <div class="mk-mobile-filter-header">
+                <h3>Filter & Sort</h3>
+                <button class="mk-mobile-filter-close" @onclick="ToggleMobileFilter">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
                     </svg>
-                    Clear Filter
                 </button>
             </div>
-        } *@
+            <div class="mk-mobile-filter-body">
+                <!-- Category -->
+                <div class="mk-filter-group">
+                    <div class="mk-filter-group-title">Category</div>
+                    @foreach (var cat in FilterCategories)
+                    {
+                        var isSel = IsCategorySelected(cat);
+                        var available = products.Any(p => !string.IsNullOrWhiteSpace(p.Category)
+                            && p.Category.Equals(cat, StringComparison.OrdinalIgnoreCase));
+                        <label class="mk-filter-option" @onclick="() => ToggleCategory(cat)">
+                            <input type="checkbox" checked="@isSel" />
+                            <span class="mk-option-label">@cat</span>
+                            @if (!available)
+                            {
+                                <span class="mk-option-unavailable">—</span>
+                            }
+                        </label>
+                    }
+                </div>
 
-        @if (FilteredProducts.Any())
-        {
-            <div class="mk-grid">
+                <!-- Size -->
+                <div class="mk-filter-group">
+                    <div class="mk-filter-group-title">Size</div>
+                    @foreach (var size in FilterSizes)
+                    {
+                        var isSel = IsSizeSelected(size);
+                        var available = IsSizeAvailable(size);
+                        <label class="@("mk-filter-option" + (available ? "" : " mk-option-disabled"))" @onclick="() => ToggleSizeIfAvailable(size, available)">
+                            <input type="checkbox" checked="@isSel" disabled="@(!available)" />
+                            <span class="mk-option-label">@size</span>
+                            @if (!available)
+                            {
+                                <span class="mk-option-unavailable">—</span>
+                            }
+                        </label>
+                    }
+                </div>
 
-                @foreach (var p in FilteredProducts)
+                <!-- Colour -->
+                <div class="mk-filter-group">
+                    <div class="mk-filter-group-title">Colour</div>
+                    @foreach (var colour in FilterColours)
+                    {
+                        var isSel = IsColourSelected(colour);
+                        var available = products.Any(p => !p.IsSoldOut && p.StockQuantity > 0
+                            && !string.IsNullOrWhiteSpace(p.Color)
+                            && GetColours(p.Color).Contains(colour, StringComparer.OrdinalIgnoreCase));
+                        <label class="@("mk-filter-option" + (available ? "" : " mk-option-disabled"))" @onclick="() => ToggleColourIfAvailable(colour, available)">
+                            <input type="checkbox" checked="@isSel" disabled="@(!available)" />
+                            <span class="mk-option-label">@colour</span>
+                            @if (!available)
+                            {
+                                <span class="mk-option-unavailable">—</span>
+                            }
+                        </label>
+                    }
+                </div>
+
+                <!-- Price Range -->
+                <div class="mk-filter-group">
+                    <div class="mk-filter-group-title">Price Range</div>
+                    @foreach (var range in FilterPriceRanges)
+                    {
+                        var isSel = IsPriceRangeSelected(range);
+                        <label class="mk-filter-option" @onclick="() => TogglePriceRange(range)">
+                            <input type="checkbox" checked="@isSel" />
+                            <span class="mk-option-label">@range</span>
+                        </label>
+                    }
+                </div>
+            </div>
+            <div class="mk-mobile-filter-footer">
+                @if (HasAnyFilter)
                 {
-                    var inStock = p.StockQuantity > 0;
+                    <button class="mk-mobile-filter-clear" @onclick="ClearAllFilters">Clear All Filters</button>
+                }
+                <button class="mk-mobile-filter-apply" @onclick="ToggleMobileFilter">Show @MatchingCount Products</button>
+            </div>
+        </div>
+    }
 
-                    <div class="mk-card"
-                         @onclick="@(() => Go(p.Id))">
+    <!-- ================= DESKTOP LAYOUT ================= -->
+    <main class="mk-body">
 
-                        <!-- IMAGE -->
-                        <div class="mk-media">
-
-                            <!-- New / Sold Out -->
-                            @if (!inStock)
+        <!-- FILTER SIDEBAR (DESKTOP) -->
+        <aside class="mk-filter-sidebar">
+            <div class="mk-filter-sidebar-header">
+                <h3>Filters</h3>
+                @if (HasAnyFilter)
+                {
+                    <button class="mk-filter-clear" @onclick="ClearAllFilters">Clear All</button>
+                }
+            </div>
+            <div class="mk-filters">
+                <!-- Category -->
+                <div class="mk-filter-group">
+                    <div class="mk-filter-group-title">Category</div>
+                    @foreach (var cat in FilterCategories)
+                    {
+                        var isSel = IsCategorySelected(cat);
+                        var available = products.Any(p => !string.IsNullOrWhiteSpace(p.Category)
+                            && p.Category.Equals(cat, StringComparison.OrdinalIgnoreCase));
+                        <label class="mk-filter-option" @onclick="() => ToggleCategory(cat)">
+                            <input type="checkbox" checked="@isSel" />
+                            <span class="mk-option-label">@cat</span>
+                            @if (!available)
                             {
-                                <span class="mk-tag mk-tag-out">
-                                    Sold Out
-                                </span>
+                                <span class="mk-option-unavailable">—</span>
                             }
-                            else if (IsNew(p))
+                        </label>
+                    }
+                </div>
+
+                <!-- Size -->
+                <div class="mk-filter-group">
+                    <div class="mk-filter-group-title">Size</div>
+                    @foreach (var size in FilterSizes)
+                    {
+                        var isSel = IsSizeSelected(size);
+                        var available = IsSizeAvailable(size);
+                        <label class="@("mk-filter-option" + (available ? "" : " mk-option-disabled"))" @onclick="() => ToggleSizeIfAvailable(size, available)">
+                            <input type="checkbox" checked="@isSel" disabled="@(!available)" />
+                            <span class="mk-option-label">@size</span>
+                            @if (!available)
                             {
-                                <span class="mk-tag mk-tag-new">
-                                    New
-                                </span>
+                                <span class="mk-option-unavailable">—</span>
                             }
+                        </label>
+                    }
+                </div>
 
-                            <!-- Favorite -->
-                            <button class="mk-favorite"
-                                    @onclick:stopPropagation="true">
-
-                                <svg viewBox="0 0 24 24"
-                                     width="17"
-                                     height="17"
-                                     fill="none"
-                                     stroke="currentColor"
-                                     stroke-width="1.5">
-
-                                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 0 0 0-7.78z" />
-
-                                </svg>
-
-                            </button>
-
-
-                            <!-- Product Image -->
-                            @if (!string.IsNullOrWhiteSpace(p.ImagePath))
+                <!-- Colour -->
+                <div class="mk-filter-group">
+                    <div class="mk-filter-group-title">Colour</div>
+                    @foreach (var colour in FilterColours)
+                    {
+                        var isSel = IsColourSelected(colour);
+                        var available = products.Any(p => !p.IsSoldOut && p.StockQuantity > 0
+                            && !string.IsNullOrWhiteSpace(p.Color)
+                            && GetColours(p.Color).Contains(colour, StringComparer.OrdinalIgnoreCase));
+                        <label class="@("mk-filter-option" + (available ? "" : " mk-option-disabled"))" @onclick="() => ToggleColourIfAvailable(colour, available)">
+                            <input type="checkbox" checked="@isSel" disabled="@(!available)" />
+                            <span class="mk-option-label">@colour</span>
+                            @if (!available)
                             {
-                                <img src="@p.ImagePath"
-                                     alt="@p.Name"
-                                     class="@(!inStock ? "mk-img-muted" : "")" />
+                                <span class="mk-option-unavailable">—</span>
                             }
-                            else
-                            {
-                                <div class="mk-img-fallback">
+                        </label>
+                    }
+                </div>
 
-                                    <svg viewBox="0 0 64 64"
-                                         width="42"
-                                         height="42"
-                                         fill="none"
-                                         stroke="currentColor"
-                                         stroke-width="1.5">
+                <!-- Price Range -->
+                <div class="mk-filter-group">
+                    <div class="mk-filter-group-title">Price Range</div>
+                    @foreach (var range in FilterPriceRanges)
+                    {
+                        var isSel = IsPriceRangeSelected(range);
+                        <label class="mk-filter-option" @onclick="() => TogglePriceRange(range)">
+                            <input type="checkbox" checked="@isSel" />
+                            <span class="mk-option-label">@range</span>
+                        </label>
+                    }
+                </div>
+            </div>
+        </aside>
 
-                                        <rect x="8"
-                                              y="8"
-                                              width="48"
-                                              height="48"
-                                              rx="4" />
+        <!-- PRODUCT AREA -->
+        <div class="mk-product-area">
 
-                                        <circle cx="22"
-                                                cy="24"
-                                                r="5" />
+            <!-- SORT BY -->
+            <div class="mk-sort-bar">
+                <span class="mk-sort-label">Sort By:</span>
+                <select class="mk-sort-select" @bind="SortBy" @bind:event="onchange">
+                    <option value="featured">Featured</option>
+                    <option value="price-low">Price: Low to High</option>
+                    <option value="price-high">Price: High to Low</option>
+                    <option value="newest">Newest First</option>
+                </select>
+                <span class="mk-result-count">@MatchingCount products found</span>
+            </div>
 
-                                        <path d="M8 44l14-14 10 10 8-8 16 16" />
+            <!-- PRODUCT GRID -->
+            @if (FilteredAndSortedProducts.Any())
+            {
+                <div class="mk-grid">
+                    @foreach (var p in FilteredAndSortedProducts)
+                    {
+                        var effectivePrice = p.OfferPrice.HasValue && p.OfferPrice > 0 ? p.OfferPrice.Value : p.Price;
+                        var inStock = !p.IsSoldOut && p.StockQuantity > 0;
 
-                                    </svg>
+                        <div class="mk-card"
+                             @onclick="@(() => Go(p.Id))">
 
-                                </div>
-                            }
+                            <!-- IMAGE -->
+                            <div class="mk-media">
 
-                        </div>
-
-
-                        <!-- PRODUCT INFORMATION -->
-                        <div class="mk-info">
-
-                            <!-- Brand -->
-                            @if (!string.IsNullOrWhiteSpace(p.Brand))
-                            {
-                                <div class="mk-brand">
-                                    @p.Brand
-                                </div>
-                            }
-
-                            <!-- Product Name -->
-                            <div class="mk-name">
-                                @p.Name
-                            </div>
-
-                            <!-- Price -->
-                            @* <div class="mk-price">
-                                Rs.@p.Price.ToString("N0")
-                            </div> *@
-
-                            <!-- Quantity / Stock -->
-                            @* <div class="mk-stock-row">
-
-                                <div class="@($"mk-stock {(inStock ? "mk-stock-in" : "mk-stock-out")}")">
-
-                                    <span class="mk-stock-dot"></span>
-
-                                    @(inStock ? "In stock" : "Out of stock")
-
-                                </div>
-
-                                @if (inStock)
+                                <!-- New / Special Offer / Sold Out tags -->
+                                @if (!inStock)
                                 {
-                                    <div class="mk-quantity">
-                                        @p.StockQuantity
+                                    <span class="mk-tag mk-tag-out">Sold Out</span>
+                                }
+                                else
+                                {
+                                    @if (p.IsNewArrival)
+                                    {
+                                        <span class="mk-tag mk-tag-new">New</span>
+                                    }
+                                    @if (p.IsSpecialOffer)
+                                    {
+                                        <span class="mk-tag mk-tag-offer">Offer</span>
+                                    }
+                                }
+
+                                <!-- Favorite -->
+                                <button class="mk-favorite"
+                                        @onclick:stopPropagation="true">
+                                    <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="1.5">
+                                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 0 0 0-7.78z" />
+                                    </svg>
+                                </button>
+
+                                <!-- Product Image -->
+                                @if (!string.IsNullOrWhiteSpace(p.ImagePath))
+                                {
+                                    <img src="@p.ImagePath"
+                                         alt="@p.Name"
+                                         class="@(!inStock ? "mk-img-muted" : "")" />
+                                }
+                                else
+                                {
+                                    <div class="mk-img-fallback">
+                                        <svg viewBox="0 0 64 64" width="42" height="42" fill="none" stroke="currentColor" stroke-width="1.5">
+                                            <rect x="8" y="8" width="48" height="48" rx="4" />
+                                            <circle cx="22" cy="24" r="5" />
+                                            <path d="M8 44l14-14 10 10 8-8 16 16" />
+                                        </svg>
                                     </div>
                                 }
 
-                            </div> *@
+                                <!-- Price overlay -->
+                                @if (p.OfferPrice.HasValue && p.OfferPrice > 0 && inStock)
+                                {
+                                    <span class="mk-offer-badge">Rs. @effectivePrice.ToString("N0")</span>
+                                }
+                            </div>
 
+                            <!-- PRODUCT INFORMATION -->
+                            <div class="mk-info">
+                                @if (!string.IsNullOrWhiteSpace(p.Brand))
+                                {
+                                    <div class="mk-brand">@p.Brand</div>
+                                }
+                                <div class="mk-name">@p.Name</div>
+                                <div class="mk-price-row">
+                                    <span class="mk-price">Rs. @effectivePrice.ToString("N0")</span>
+                                    @if (p.OfferPrice.HasValue && p.OfferPrice > 0 && p.OfferPrice < p.Price)
+                                    {
+                                        <span class="mk-price-original">Rs. @p.Price.ToString("N0")</span>
+                                    }
+                                </div>
+                                <div class="mk-stock-row">
+                                    <span class="@("mk-stock-dot " + (inStock ? "mk-stock-in" : "mk-stock-out"))"></span>
+                                    @(inStock ? "In Stock" : "Sold Out")
+                                </div>
+                            </div>
                         </div>
-
+                    }
+                </div>
+            }
+            else
+            {
+                <div class="mk-empty">
+                    <div class="mk-empty-icon">
+                        <svg viewBox="0 0 24 24" width="35" height="35" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <circle cx="11" cy="11" r="7" />
+                            <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                        </svg>
                     </div>
-                }
-
-            </div>
-        }
-        else
-        {
-            <div class="mk-empty">
-
-                <div class="mk-empty-icon">
-                    <svg viewBox="0 0 24 24"
-                         width="35"
-                         height="35"
-                         fill="none"
-                         stroke="currentColor"
-                         stroke-width="1.5">
-
-                        <circle cx="11"
-                                cy="11"
-                                r="7" />
-
-                        <line x1="21"
-                              y1="21"
-                              x2="16.65"
-                              y2="16.65" />
-
-                    </svg>
+                    <div>
+                        @(string.IsNullOrWhiteSpace(SearchTerm) && !HasAnyFilter
+                            ? "No products found"
+                            : $"No products match \"{SearchTerm}\" with the selected filters")
+                    </div>
+                    @if (HasAnyFilter)
+                    {
+                        <button class="mk-btn-reset" @onclick="ClearAllFilters">Clear All Filters</button>
+                    }
                 </div>
+            }
 
-                <div>
-                    @(string.IsNullOrWhiteSpace(StyleName)
-                        ? $"No products match \"{SearchTerm}\""
-                        : $"No {StyleName.ToLower()} products found")
-                </div>
-
-            </div>
-        }
-
+        </div>
     </main>
 
 </div>
 
-
 @code {
-
     private List<Product> products = new();
     private List<Style> styles = new();
 
     private string SearchTerm = "";
     private string? StyleSlug;
     private string StyleName = "";
+    private string SortBy = "featured";
     private bool _mobileMenuOpen = false;
+    private bool _mobileFilterOpen = false;
+
+    // Filter state
+    private HashSet<string> SelectedCategories = new(StringComparer.OrdinalIgnoreCase);
+    private HashSet<string> SelectedSizes = new(StringComparer.OrdinalIgnoreCase);
+    private HashSet<string> SelectedColours = new(StringComparer.OrdinalIgnoreCase);
+    private HashSet<string> SelectedPriceRanges = new(StringComparer.OrdinalIgnoreCase);
+
+    // Fixed filter options
+    private static readonly string[] FilterCategories = {
+        "Flat Sandals", "Winter Collection", "Ethnic & Festive Wear", "Heels", "Special Offers", "New Arrivals"
+    };
+
+    private static readonly string[] FilterSizes = { "35", "36", "37", "38", "39", "40", "41" };
+
+    private static readonly string[] FilterColours = {
+        "Black", "White", "Beige", "Peach", "Tan", "Mint Green", "Cherry Red", "Cream", "Lavender"
+    };
+
+    private static readonly string[] FilterPriceRanges = {
+        "Under Rs. 750", "Rs. 750-850", "Rs. 850-950", "Above Rs. 950"
+    };
+
+    private bool HasAnyFilter =>
+        SelectedCategories.Count > 0 ||
+        SelectedSizes.Count > 0 ||
+        SelectedColours.Count > 0 ||
+        SelectedPriceRanges.Count > 0 ||
+        !string.IsNullOrWhiteSpace(SearchTerm);
+
+    private int FilterCount =>
+        SelectedCategories.Count + SelectedSizes.Count + SelectedColours.Count + SelectedPriceRanges.Count;
+
+    private int MatchingCount => FilteredAndSortedProducts.Count();
 
     private IEnumerable<Product> FilteredProducts
     {
@@ -265,63 +423,200 @@
         {
             var query = products.AsEnumerable();
 
-            if (!string.IsNullOrWhiteSpace(StyleSlug) && styles.Any())
-            {
-                var matchedStyle = styles.FirstOrDefault(s =>
-                    s.Slug.Equals(StyleSlug, StringComparison.OrdinalIgnoreCase));
-
-                if (matchedStyle is not null)
-                {
-                    StyleName = matchedStyle.Name;
-                    query = query.Where(p => p.StyleId == matchedStyle.Id);
-                }
-            }
-
             if (!string.IsNullOrWhiteSpace(SearchTerm))
             {
+                var term = SearchTerm.Trim();
                 query = query.Where(p =>
-                    (!string.IsNullOrWhiteSpace(p.Name) &&
-                     p.Name.Contains(SearchTerm, StringComparison.OrdinalIgnoreCase))
-                    ||
-                    (!string.IsNullOrWhiteSpace(p.Brand) &&
-                     p.Brand.Contains(SearchTerm, StringComparison.OrdinalIgnoreCase)));
+                    (!string.IsNullOrWhiteSpace(p.Name) && p.Name.Contains(term, StringComparison.OrdinalIgnoreCase))
+                    || (!string.IsNullOrWhiteSpace(p.Brand) && p.Brand.Contains(term, StringComparison.OrdinalIgnoreCase))
+                    || (!string.IsNullOrWhiteSpace(p.Category) && p.Category.Contains(term, StringComparison.OrdinalIgnoreCase)));
+            }
+
+            if (SelectedCategories.Count > 0)
+            {
+                query = query.Where(p => !string.IsNullOrWhiteSpace(p.Category)
+                    && SelectedCategories.Contains(p.Category));
+            }
+
+            if (SelectedSizes.Count > 0)
+            {
+                query = query.Where(p => !p.IsSoldOut && p.StockQuantity > 0
+                    && SelectedSizes.Intersect(GetSizes(p.Size)).Any());
+            }
+
+            if (SelectedColours.Count > 0)
+            {
+                query = query.Where(p => !p.IsSoldOut && p.StockQuantity > 0
+                    && !string.IsNullOrWhiteSpace(p.Color)
+                    && SelectedColours.Intersect(GetColours(p.Color)).Any());
+            }
+
+            if (SelectedPriceRanges.Count > 0)
+            {
+                query = query.Where(p =>
+                {
+                    var price = p.OfferPrice.HasValue && p.OfferPrice > 0 ? p.OfferPrice.Value : p.Price;
+                    return SelectedPriceRanges.Any(pr => PriceInRange(price, pr));
+                });
             }
 
             return query;
         }
     }
 
+    private IEnumerable<Product> FilteredAndSortedProducts
+    {
+        get
+        {
+            var query = FilteredProducts;
+
+            query = SortBy switch
+            {
+                "price-low" => query.OrderBy(p =>
+                    (p.OfferPrice.HasValue && p.OfferPrice > 0 ? p.OfferPrice.Value : p.Price)),
+                "price-high" => query.OrderByDescending(p =>
+                    (p.OfferPrice.HasValue && p.OfferPrice > 0 ? p.OfferPrice.Value : p.Price)),
+                "newest" => query.OrderByDescending(p => p.CreatedAt),
+                _ => query.OrderByDescending(p => p.CreatedAt)
+            };
+
+            return query;
+        }
+    }
+
+    private static IEnumerable<string> GetSizes(string? sizeCsv)
+    {
+        if (string.IsNullOrWhiteSpace(sizeCsv)) return Enumerable.Empty<string>();
+        return sizeCsv.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+            .Select(s => s.Trim());
+    }
+
+    private static IEnumerable<string> GetColours(string? colorCsv)
+    {
+        if (string.IsNullOrWhiteSpace(colorCsv)) return Enumerable.Empty<string>();
+        return colorCsv.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+            .Select(c => c.Trim());
+    }
+
+    private static bool PriceInRange(decimal price, string range)
+    {
+        return range switch
+        {
+            "Under Rs. 750" => price < 750,
+            "Rs. 750-850" => price >= 750 && price < 850,
+            "Rs. 850-950" => price >= 850 && price < 950,
+            "Above Rs. 950" => price >= 950,
+            _ => false
+        };
+    }
+
+    private bool IsSizeAvailable(string size)
+    {
+        return products.Any(p => !p.IsSoldOut && p.StockQuantity > 0
+            && GetSizes(p.Size).Contains(size, StringComparer.OrdinalIgnoreCase));
+    }
 
     protected override async Task OnInitializedAsync()
     {
         styles = await StyleService.GetAllAsync();
+        products = await ProductService.GetAllAsync();
 
         var uri = new Uri(Nav.Uri);
         var query = System.Web.HttpUtility.ParseQueryString(uri.Query);
-        StyleSlug = query["style"];
 
-        products = await ProductService.GetAllAsync();
+        var cat = query["cat"];
+        if (!string.IsNullOrWhiteSpace(cat))
+        {
+            SelectedCategories.Add(cat);
+        }
+
+        var styleSlug = query["style"];
+        if (!string.IsNullOrWhiteSpace(styleSlug))
+        {
+            StyleSlug = styleSlug;
+            var matchedStyle = styles.FirstOrDefault(s =>
+                s.Slug.Equals(styleSlug, StringComparison.OrdinalIgnoreCase));
+            if (matchedStyle is not null)
+            {
+                StyleName = matchedStyle.Name;
+                SelectedCategories.Add(matchedStyle.Name);
+            }
+        }
     }
 
-    private void ClearStyleFilter()
+    private void ToggleMobileFilter()
     {
+        _mobileFilterOpen = !_mobileFilterOpen;
+        if (_mobileFilterOpen)
+            JS.InvokeVoidAsync("eval", "document.body.style.overflow='hidden';document.documentElement.style.overflow='hidden'");
+        else
+            JS.InvokeVoidAsync("eval", "document.body.style.overflow='';document.documentElement.style.overflow=''");
+    }
+
+    private void ClearAllFilters()
+    {
+        SelectedCategories.Clear();
+        SelectedSizes.Clear();
+        SelectedColours.Clear();
+        SelectedPriceRanges.Clear();
+        SearchTerm = "";
         StyleSlug = null;
         StyleName = "";
+        SortBy = "featured";
         Nav.NavigateTo("/items");
     }
 
-
-    private void ApplySearch()
+    private void ToggleCategory(string category)
     {
-        // Filtering is reactive because SearchTerm is bound with oninput.
+        if (SelectedCategories.Contains(category))
+            SelectedCategories.Remove(category);
+        else
+            SelectedCategories.Add(category);
     }
 
+    private void ToggleSize(string size)
+    {
+        if (SelectedSizes.Contains(size))
+            SelectedSizes.Remove(size);
+        else
+            SelectedSizes.Add(size);
+    }
+
+    private void ToggleSizeIfAvailable(string size, bool available)
+    {
+        if (available) ToggleSize(size);
+    }
+
+    private void ToggleColour(string colour)
+    {
+        if (SelectedColours.Contains(colour))
+            SelectedColours.Remove(colour);
+        else
+            SelectedColours.Add(colour);
+    }
+
+    private void ToggleColourIfAvailable(string colour, bool available)
+    {
+        if (available) ToggleColour(colour);
+    }
+
+    private void TogglePriceRange(string range)
+    {
+        if (SelectedPriceRanges.Contains(range))
+            SelectedPriceRanges.Remove(range);
+        else
+            SelectedPriceRanges.Add(range);
+    }
+
+    private bool IsCategorySelected(string category) => SelectedCategories.Contains(category);
+    private bool IsSizeSelected(string size) => SelectedSizes.Contains(size);
+    private bool IsColourSelected(string colour) => SelectedColours.Contains(colour);
+    private bool IsPriceRangeSelected(string range) => SelectedPriceRanges.Contains(range);
 
     private static bool IsNew(Product p)
     {
         return (DateTime.UtcNow - p.CreatedAt).TotalDays <= 14;
     }
-
 
     private void Go(int id)
     {
@@ -332,5 +627,4 @@
     {
         _mobileMenuOpen = !_mobileMenuOpen;
     }
-
 }

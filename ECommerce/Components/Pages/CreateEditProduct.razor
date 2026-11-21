@@ -58,7 +58,9 @@
                         <th>Name</th>
                         <th>Brand</th>
                         <th>Style</th>
+                        <th>Category</th>
                         <th>Price</th>
+                        <th>Offer</th>
                         <th>Stock</th>
                         <th>Size</th>
                         <th>Color</th>
@@ -85,10 +87,21 @@
                             </td>
                             <td><span class="ap-brand-tag">@p.Brand</span></td>
                             <td><span class="ap-style-tag">@(GetStyleName(p.StyleId))</span></td>
+                            <td><span class="ap-category-tag">@p.Category</span></td>
                             <td class="ap-price">Rs.@p.Price.ToString("N0")</td>
+                            <td class="ap-offer">
+                                @if (p.OfferPrice.HasValue && p.OfferPrice > 0)
+                                {
+                                    <span class="ap-offer-tag">Rs.@p.OfferPrice.Value.ToString("N0")</span>
+                                }
+                                else
+                                {
+                                    <span class="ap-muted">—</span>
+                                }
+                            </td>
                             <td>
-                                <span class="@("ap-stock-pill " + (p.StockQuantity == 0 ? "ap-stock-zero" : p.StockQuantity <= 5 ? "ap-stock-low" : "ap-stock-ok"))">
-                                    <span class="ap-dot"></span>@p.StockQuantity
+                                <span class="@("ap-stock-pill " + (p.IsSoldOut || p.StockQuantity == 0 ? "ap-stock-zero" : p.StockQuantity <= 5 ? "ap-stock-low" : "ap-stock-ok"))">
+                                    <span class="ap-dot"></span>@(p.IsSoldOut ? "Sold Out" : p.StockQuantity.ToString())
                                 </span>
                             </td>
                             <td class="ap-muted">@p.Size</td>
@@ -98,6 +111,16 @@
                                 </span>
                             </td>
                             <td class="ap-col-actions">
+                                <div class="ap-badges">
+                                    @if (p.IsNewArrival)
+                                    {
+                                        <span class="ap-badge ap-badge-new">New</span>
+                                    }
+                                    @if (p.IsSpecialOffer)
+                                    {
+                                        <span class="ap-badge ap-badge-offer">Offer</span>
+                                    }
+                                </div>
                                 <button class="ap-icon-btn" title="Edit" @onclick="@(() => OpenForm(p))">
                                     <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
                                         <path d="M12 20h9" />
@@ -164,7 +187,7 @@
 
         var result = await DialogService.OpenAsync<ProductFormDialog>(
           product is null ? "Add Product" : "Edit Product",
-          new Dictionary<string, object>
+          new Dictionary<string, object?>
           {
             { "Existing", product }
           },

@@ -1,7 +1,7 @@
 ﻿/* ================================================================
    Comfy Wear — HomePage
-   Palette: cream #FBF7F1 | olive #33422E | marigold #D98E2B
-            ink #221F1A | sand #E8DCC8 | white #FFFFFF
+   Palette: cream #EDE5DA | olive #927354 | marigold #927354
+            ink #302820 | sand #D4C3AF | white #FFFFFF
    ================================================================ */
 
 /* ---------- Reset scope ---------- */
@@ -9,8 +9,8 @@
     all: initial;
     display: block;
     font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
-    background: #FBF7F1;
-    color: #221F1A;
+    background: #EDE5DA;
+    color: #302820;
     overflow-x: hidden;
 }
 
@@ -39,39 +39,39 @@
 }
 
 .cw-btn-primary {
-    background: #11346f;
-    color: #FBF7F1;
-    border-color: #11346f;
+    background: #927354;
+    color: #EDE5DA;
+    border-color: #927354;
 }
 
     .cw-btn-primary:hover {
-        background: #11346f;
-        border-color: #11346f;
+        background: #927354;
+        border-color: #927354;
         transform: translateY(-1px);
         box-shadow: 0 6px 20px rgba(34, 31, 26, 0.25);
     }
 
 .cw-btn-outline {
     background: transparent;
-    color: #33422E;
-    border-color: #33422E;
+    color: #927354;
+    border-color: #927354;
 }
 
 .cw-btn-outline:hover {
-    background: #33422E;
-    color: #FBF7F1;
+    background: #927354;
+    color: #EDE5DA;
 }
 
 .cw-btn-gold {
-    background: #D98E2B;
-    color: #221F1A;
-    border-color: #D98E2B;
+    background: #927354;
+    color: #302820;
+    border-color: #927354;
     font-weight: 700;
 }
 
 .cw-btn-gold:hover {
-    background: #c47e22;
-    border-color: #c47e22;
+    background: #7a5e44;
+    border-color: #7a5e44;
 }
 
 /* ================================================================
@@ -94,7 +94,7 @@
     display: none;
     background: none;
     border: none;
-    color: #33422E;
+    color: #927354;
     cursor: pointer;
     padding: 4px;
 }
@@ -107,7 +107,7 @@
     font-weight: 600;
     font-size: 1.4rem;
     letter-spacing: 1px;
-    color: #33422E;
+    color: #927354;
     text-transform: lowercase;
     cursor: pointer;
     white-space: nowrap;
@@ -118,7 +118,7 @@
     width: 10px;
     height: 10px;
     border-radius: 50%;
-    background: #D98E2B;
+    background: #927354;
     display: inline-block;
 }
 
@@ -165,7 +165,7 @@
 .cw-nav-link {
     font-size: 0.88rem;
     font-weight: 500;
-    color: #33422E;
+    color: #927354;
     text-decoration: none;
     position: relative;
     padding: 4px 0;
@@ -179,12 +179,12 @@
     left: 0;
     width: 0;
     height: 2px;
-    background: #D98E2B;
+    background: #927354;
     transition: width 0.25s ease;
 }
 
 .cw-nav-link:hover {
-    color: #D98E2B;
+    color: #927354;
 }
 
 .cw-nav-link:hover::after {
@@ -207,7 +207,7 @@
 .cw-search-icon {
     position: absolute;
     left: 12px;
-    color: #8A8272;
+    color: #7A6A55;
     pointer-events: none;
 }
 
@@ -218,7 +218,7 @@
     background: #fff;
     font-family: inherit;
     font-size: 0.85rem;
-    color: #221F1A;
+    color: #302820;
     width: 220px;
     transition: border-color 0.2s, box-shadow 0.2s;
     outline: none;
@@ -229,7 +229,7 @@
 }
 
 .cw-search-input:focus {
-    border-color: #D98E2B;
+    border-color: #927354;
     box-shadow: 0 0 0 3px rgba(217, 142, 43, 0.12);
 }
 
@@ -242,14 +242,14 @@
     border-radius: 50%;
     border: 1.5px solid rgba(51, 66, 46, 0.15);
     background: transparent;
-    color: #33422E;
+    color: #927354;
     cursor: pointer;
     transition: all 0.2s;
 }
 
 .cw-icon-btn:hover {
-    background: #E8DCC8;
-    border-color: #33422E;
+    background: #D4C3AF;
+    border-color: #927354;
 }
 
 /* ================================================================
@@ -274,7 +274,7 @@
     display: inline-block;
     padding: 5px 14px;
     background: rgba(217, 142, 43, 0.12);
-    color: #D98E2B;
+    color: #927354;
     font-size: 0.75rem;
     font-weight: 700;
     letter-spacing: 1.5px;
@@ -288,18 +288,18 @@
     font-size: 3.8rem;
     font-weight: 600;
     line-height: 1.05;
-    color: #221F1A;
+    color: #302820;
     margin: 0 0 1.25rem;
 }
 
 .cw-hero-accent {
-    color: #D98E2B;
+    color: #927354;
 }
 
 .cw-hero-sub {
     font-size: 1.05rem;
     line-height: 1.65;
-    color: #5a5550;
+    color: #7A6A55;
     max-width: 440px;
     margin: 0 0 2rem;
 }
@@ -326,12 +326,12 @@
     font-family: 'Fredoka', sans-serif;
     font-size: 1.5rem;
     font-weight: 600;
-    color: #33422E;
+    color: #927354;
 }
 
 .cw-stat-label {
     font-size: 0.72rem;
-    color: #8A8272;
+    color: #7A6A55;
     text-transform: uppercase;
     letter-spacing: 0.5px;
 }
@@ -373,7 +373,7 @@
    TRUST STRIP
    ================================================================ */
 .cw-trust-strip {
-    background: #11346f;
+    background: #927354;
     padding: 0.75rem 0;
     overflow: hidden;
 }
@@ -391,7 +391,7 @@
 }
 
 .cw-trust-item {
-    color: #FBF7F1;
+    color: #EDE5DA;
     font-size: 0.78rem;
     font-weight: 500;
     letter-spacing: 0.2px;
@@ -408,7 +408,7 @@
 }
 
 .cw-trust-icon {
-    stroke: #D98E2B;
+    stroke: #927354;
     flex-shrink: 0;
 }
 
@@ -449,7 +449,7 @@
     font-weight: 700;
     letter-spacing: 2.5px;
     text-transform: uppercase;
-    color: #D98E2B;
+    color: #927354;
     display: block;
     margin-bottom: 0.5rem;
 }
@@ -458,14 +458,14 @@
     font-family: 'Fredoka', sans-serif;
     font-size: 2.2rem;
     font-weight: 600;
-    color: #221F1A;
+    color: #302820;
     margin: 0;
 }
 
 .cw-rule {
     width: 40px;
     height: 3px;
-    background: #D98E2B;
+    background: #927354;
     margin: 0.75rem auto 0;
     border-radius: 2px;
 }
@@ -475,8 +475,20 @@
    ================================================================ */
 .cw-category-grid {
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 1.25rem;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 1rem;
+}
+
+@media (max-width: 1100px) {
+    .cw-category-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 600px) {
+    .cw-category-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
 }
 
 .cw-category-card {
@@ -496,36 +508,36 @@
 .cw-category-card:hover {
     transform: translateY(-6px);
     box-shadow: 0 12px 32px rgba(51, 66, 46, 0.12);
-    border-color: #D98E2B;
+    border-color: #927354;
 }
 
 .cw-category-icon {
     width: 64px;
     height: 64px;
     border-radius: 50%;
-    background: linear-gradient(135deg, #FBF7F1 0%, #E8DCC8 100%);
+    background: linear-gradient(135deg, #EDE5DA 0%, #D4C3AF 100%);
     display: flex;
     align-items: center;
     justify-content: center;
     transition: all 0.25s ease;
-    color: #33422E;
+    color: #927354;
 }
 
 .cw-category-card:hover .cw-category-icon {
-    background: linear-gradient(135deg, #33422E 0%, #221F1A 100%);
-    color: #D98E2B;
+    background: linear-gradient(135deg, #927354 0%, #302820 100%);
+    color: #EDE5DA;
     transform: rotate(-5deg) scale(1.08);
 }
 
 .cw-category-name {
     font-weight: 600;
     font-size: 0.92rem;
-    color: #221F1A;
+    color: #302820;
 }
 
 .cw-category-count {
     font-size: 0.72rem;
-    color: #8A8272;
+    color: #7A6A55;
 }
 
 /* ================================================================
@@ -554,7 +566,7 @@
 .cw-product-img {
     position: relative;
     height: 220px;
-    background: linear-gradient(135deg, #f5f0ea 0%, #e8e2d8 100%);
+    background: linear-gradient(135deg, #EDE5DA 0%, #D4C3AF 100%);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -573,7 +585,7 @@
 }
 
 .cw-product-placeholder {
-    color: #c5bfb6;
+    color: #A89986;
 }
 
 .cw-product-tag {
@@ -589,13 +601,18 @@
 }
 
 .cw-tag-new {
-    background: #33422E;
-    color: #FBF7F1;
+    background: #927354;
+    color: #EDE5DA;
 }
 
 .cw-tag-sold {
     background: #C1440E;
     color: #fff;
+}
+
+.cw-tag-offer {
+    background: #927354;
+    color: #EDE5DA;
 }
 
 .cw-product-body {
@@ -608,7 +625,7 @@
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 1px;
-    color: #D98E2B;
+    color: #927354;
     margin-bottom: 4px;
 }
 
@@ -616,7 +633,7 @@
     display: block;
     font-weight: 600;
     font-size: 0.95rem;
-    color: #221F1A;
+    color: #302820;
     margin-bottom: 0.75rem;
     line-height: 1.3;
 }
@@ -630,7 +647,13 @@
 .cw-product-price {
     font-weight: 700;
     font-size: 1rem;
-    color: #33422E;
+    color: #927354;
+}
+
+.cw-product-price-original {
+    font-size: 0.82rem;
+    color: #7A6A55;
+    text-decoration: line-through;
 }
 
 .cw-product-stock {
@@ -674,7 +697,7 @@
    BANNER
    ================================================================ */
 .cw-banner {
-    background: linear-gradient(135deg, #33422E 0%, #221F1A 100%);
+    background: linear-gradient(135deg, #927354 0%, #302820 100%);
     padding: 3.5rem 2rem;
 }
 
@@ -691,7 +714,7 @@
     font-family: 'Fredoka', sans-serif;
     font-size: 1.6rem;
     font-weight: 600;
-    color: #FBF7F1;
+    color: #EDE5DA;
     margin: 0 0 0.4rem;
 }
 
@@ -712,7 +735,7 @@
     border: 1.5px solid rgba(251, 247, 241, 0.2);
     border-radius: 4px;
     background: rgba(255, 255, 255, 0.08);
-    color: #FBF7F1;
+    color: #EDE5DA;
     font-family: inherit;
     font-size: 0.85rem;
     width: 260px;
@@ -725,14 +748,14 @@
 }
 
 .cw-banner-input:focus {
-    border-color: #D98E2B;
+    border-color: #927354;
 }
 
 /* ================================================================
    FOOTER
    ================================================================ */
 .cw-footer {
-    background: #1a1815;
+    background: #302820;
     color: rgba(251, 247, 241, 0.7);
     padding-top: 3.5rem;
 }
@@ -747,7 +770,7 @@
 }
 
 .cw-logo-footer {
-    color: #FBF7F1 !important;
+    color: #EDE5DA !important;
     margin-bottom: 0.75rem;
 }
 
@@ -768,7 +791,7 @@
     font-family: 'Fredoka', sans-serif;
     font-size: 0.9rem;
     font-weight: 600;
-    color: #FBF7F1;
+    color: #EDE5DA;
     margin: 0 0 0.75rem;
 }
 
@@ -782,7 +805,7 @@
 }
 
 .cw-footer-col a:hover {
-    color: #D98E2B;
+    color: #927354;
 }
 
 .cw-footer-bottom {
@@ -877,7 +900,7 @@
         top: 100%;
         left: 0;
         right: 0;
-        background: #FBF7F1;
+        background: #EDE5DA;
         flex-direction: column;
         gap: 0;
         padding: 0.5rem 1.25rem 1rem;

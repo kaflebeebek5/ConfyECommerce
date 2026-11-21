@@ -63,13 +63,18 @@ namespace ECommerce.Services
                 Name = product.Name,
                 Description = product.Description,
                 Price = product.Price,
+                OfferPrice = product.OfferPrice,
                 Size = product.Size,
                 Color = product.Color,
                 Brand = product.Brand,
+                Category = product.Category,
                 StyleId = product.StyleId,
                 StockQuantity = product.StockQuantity,
+                IsNewArrival = product.IsNewArrival,
+                IsSpecialOffer = product.IsSpecialOffer,
+                IsSoldOut = product.IsSoldOut,
                 ImagePath = product.ImagePath,
-                CreatedAt = DateTime.UtcNow
+                CreatedAt = product.CreatedAt == default ? DateTime.UtcNow : product.CreatedAt
             };
             _context.Products.Add(product1);
             await _context.SaveChangesAsync();
@@ -99,11 +104,17 @@ namespace ECommerce.Services
             existing.Name = product.Name;
             existing.Description = product.Description;
             existing.Price = product.Price;
+            existing.OfferPrice = product.OfferPrice;
             existing.Size = product.Size;
             existing.Color = product.Color;
             existing.Brand = product.Brand;
+            existing.Category = product.Category;
             existing.StyleId = product.StyleId;
             existing.StockQuantity = product.StockQuantity;
+            existing.IsNewArrival = product.IsNewArrival;
+            existing.IsSpecialOffer = product.IsSpecialOffer;
+            existing.IsSoldOut = product.IsSoldOut;
+            existing.CreatedAt = product.CreatedAt == default ? existing.CreatedAt : product.CreatedAt;
 
             // Only overwrite image if a new one was uploaded
             if (!string.IsNullOrWhiteSpace(product.ImagePath) && product.ImagePath.Contains("data"))

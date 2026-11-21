@@ -75,16 +75,79 @@
                        @bind="Model.Price" />
             </div>
             <div class="pf-field">
+                <label class="pf-label">Offer Price (Rs.)</label>
+                <input type="number" min="0" step="1"
+                       class="pf-input"
+                       @bind="Model.OfferPrice"
+                       placeholder="e.g. 699" />
+            </div>
+        </div>
+
+        <div class="pf-row">
+            <div class="pf-field">
                 <label class="pf-label">Stock Quantity <span class="pf-required">*</span></label>
                 <input type="number" min="0" step="1"
                        class="@("pf-input" + (ShowValidation && Model.StockQuantity < 0 ? " pf-input-error" : ""))"
                        @bind="Model.StockQuantity" />
             </div>
+            <div class="pf-field">
+                <label class="pf-label">Category</label>
+                <select class="pf-input pf-select" @bind="Model.Category">
+                    <option value="">-- Select Category --</option>
+                    <option value="Flat Sandals">Flat Sandals</option>
+                    <option value="Winter Collection">Winter Collection</option>
+                    <option value="Ethnic & Festive Wear">Ethnic & Festive Wear</option>
+                    <option value="Heels">Heels</option>
+                    <option value="Special Offers">Special Offers</option>
+                    <option value="New Arrivals">New Arrivals</option>
+                </select>
+            </div>
         </div>
 
         <div class="pf-field">
-            <label class="pf-label">Size <span class="pf-hint">(CSV or range)</span></label>
-            <input class="pf-input" @bind="Model.Size" placeholder="e.g. 38,39,40,41" />
+            <label class="pf-label">Available Sizes</label>
+            <div class="pf-option-grid">
+                @foreach (var size in SizeOptions)
+                {
+                    <label class="@("pf-option-chip" + (IsSizeChecked(size) ? " pf-option-selected" : ""))">
+                        <input type="checkbox" checked="@IsSizeChecked(size)" @onchange="@(() => ToggleSize(size))" />
+                        <span>@size</span>
+                    </label>
+                }
+            </div>
+        </div>
+
+        <div class="pf-field">
+            <label class="pf-label">Available Colours</label>
+            <div class="pf-option-grid">
+                @foreach (var colour in ColourOptions)
+                {
+                    <label class="@("pf-option-chip" + (IsColourChecked(colour) ? " pf-option-selected" : ""))">
+                        <input type="checkbox" checked="@IsColourChecked(colour)" @onchange="@(() => ToggleColour(colour))" />
+                        <span>@colour</span>
+                    </label>
+                }
+            </div>
+        </div>
+
+        <div class="pf-field">
+            <label class="pf-label">Date Added</label>
+            <input type="date" class="pf-input" @bind="Model.CreatedAt" />
+        </div>
+
+        <div class="pf-row pf-toggle-row">
+            <div class="pf-field pf-toggle-field">
+                <input type="checkbox" class="pf-checkbox" @bind="Model.IsNewArrival" />
+                <label class="pf-checkbox-label">New Arrival</label>
+            </div>
+            <div class="pf-field pf-toggle-field">
+                <input type="checkbox" class="pf-checkbox" @bind="Model.IsSpecialOffer" />
+                <label class="pf-checkbox-label">Special Offer</label>
+            </div>
+            <div class="pf-field pf-toggle-field">
+                <input type="checkbox" class="pf-checkbox" @bind="Model.IsSoldOut" />
+                <label class="pf-checkbox-label">Sold Out</label>
+            </div>
         </div>
 
         <!-- ==================== COVER IMAGE ==================== -->
@@ -289,6 +352,13 @@
     private const int MaxImages = 20;
     private const long MaxFileSizeBytes = 4 * 1024 * 1024;
 
+    private static readonly string[] SizeOptions = { "35", "36", "37", "38", "39", "40", "41" };
+
+    private static readonly string[] ColourOptions =
+    {
+        "Black", "White", "Beige", "Peach", "Tan", "Mint Green", "Cherry Red", "Cream", "Lavender"
+    };
+
     private List<ColorImageGroup> ColorGroups = new();
 
     private class ColorImageGroup
@@ -308,6 +378,38 @@
         }
     }
 
+    private static List<string> CsvValues(string? csv) =>
+        string.IsNullOrWhiteSpace(csv)
+            ? new List<string>()
+            : csv.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+                .Select(v => v.Trim()).ToList();
+
+    private bool IsSizeChecked(string size) =>
+        CsvValues(Model.Size).Contains(size, StringComparer.OrdinalIgnoreCase);
+
+    private bool IsColourChecked(string colour) =>
+        CsvValues(Model.Color).Contains(colour, StringComparer.OrdinalIgnoreCase);
+
+    private void ToggleSize(string size)
+    {
+        var values = CsvValues(Model.Size);
+        if (values.Contains(size, StringComparer.OrdinalIgnoreCase))
+            values.RemoveAll(v => v.Equals(size, StringComparison.OrdinalIgnoreCase));
+        else
+            values.Add(size);
+        Model.Size = string.Join(",", values);
+    }
+
+    private void ToggleColour(string colour)
+    {
+        var values = CsvValues(Model.Color);
+        if (values.Contains(colour, StringComparer.OrdinalIgnoreCase))
+            values.RemoveAll(v => v.Equals(colour, StringComparison.OrdinalIgnoreCase));
+        else
+            values.Add(colour);
+        Model.Color = string.Join(",", values);
+    }
+
     protected override async Task OnInitializedAsync()
     {
         Styles = await StyleService.GetAllAsync();
@@ -320,11 +422,16 @@
                 Name = Existing.Name,
                 Description = Existing.Description,
                 Price = Existing.Price,
+                OfferPrice = Existing.OfferPrice,
                 Size = Existing.Size,
                 Color = Existing.Color,
                 Brand = Existing.Brand,
+                Category = Existing.Category,
                 StyleId = Existing.StyleId,
                 StockQuantity = Existing.StockQuantity,
+                IsNewArrival = Existing.IsNewArrival,
+                IsSpecialOffer = Existing.IsSpecialOffer,
+                IsSoldOut = Existing.IsSoldOut,
                 CreatedAt = Existing.CreatedAt,
                 ProductImages = new()
             };

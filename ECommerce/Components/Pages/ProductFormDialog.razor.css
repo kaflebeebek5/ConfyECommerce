@@ -1,15 +1,15 @@
 ﻿/* ================================================================
    Product Form Dialog — Comfy Wear Theme
-   Palette: olive #33422E | marigold #D98E2B | ink #221F1A
+   Palette: olive #927354 | marigold #927354 | ink #302820
    ================================================================ */
 .pf-form {
-    --brand: #11346f;
-    --brand-hover: #221F1A;
-    --accent: #D98E2B;
-    --ink: #221F1A;
-    --muted: #8A8272;
+    --brand: #927354;
+    --brand-hover: #302820;
+    --accent: #927354;
+    --ink: #302820;
+    --muted: #7A6A55;
     --border: #E4E0D8;
-    --bg: #FBF7F1;
+    --bg: #EDE5DA;
     --bg-alt: #F3EDE4;
     --danger: #C1440E;
     --success: #2E9E5B;
@@ -19,6 +19,53 @@
     display: flex;
     flex-direction: column;
     max-height: 100%;
+}
+
+/* ---------- Selectable size / colour option chips ---------- */
+.pf-option-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 6px;
+}
+
+.pf-option-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 12px;
+    border: 1.5px solid var(--border);
+    border-radius: 6px;
+    background: #fff;
+    color: var(--ink);
+    font-size: 0.8rem;
+    font-weight: 500;
+    cursor: pointer;
+    user-select: none;
+    transition: all 0.18s ease;
+}
+
+.pf-option-chip:hover {
+    border-color: var(--accent);
+}
+
+.pf-option-chip input {
+    margin: 0;
+    accent-color: var(--accent);
+    width: 14px;
+    height: 14px;
+    cursor: pointer;
+}
+
+.pf-option-chip.pf-option-selected {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+    font-weight: 600;
+}
+
+.pf-option-chip.pf-option-selected input {
+    accent-color: #fff;
 }
 
 /* ---------- Scrollable body ---------- */
@@ -48,7 +95,7 @@
     height: 40px;
     border-radius: 10px;
     background: var(--brand);
-    color: #FBF7F1;
+    color: #EDE5DA;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -184,12 +231,12 @@
 }
 
 .pf-section-icon-cover {
-    background: linear-gradient(135deg, #11346f, #1a4d9e);
+    background: linear-gradient(135deg, #927354, #7a5e44);
     color: #fff;
 }
 
 .pf-section-icon-color {
-    background: linear-gradient(135deg, #D98E2B, #e6a840);
+    background: linear-gradient(135deg, #927354, #a68460);
     color: #fff;
 }
 
@@ -643,7 +690,7 @@
 
 .pf-btn-save {
     background: var(--brand);
-    color: #FBF7F1;
+    color: #EDE5DA;
 }
 
 .pf-btn-save:hover:not(:disabled) {
@@ -680,7 +727,7 @@
 }
 
 .product-dialog .rz-dialog-title {
-    color: #FBF7F1 !important;
+    color: #EDE5DA !important;
     font-family: 'Fredoka', sans-serif !important;
     font-weight: 600 !important;
 }
@@ -690,7 +737,7 @@
 }
 
 .product-dialog .rz-dialog-titlebar-close:hover .rzi {
-    color: #FBF7F1 !important;
+    color: #EDE5DA !important;
 }
 
 /* ================================================================

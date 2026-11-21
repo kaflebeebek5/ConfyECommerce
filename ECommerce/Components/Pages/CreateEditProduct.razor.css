@@ -1,14 +1,14 @@
 ﻿.ap-page {
-    --brand: #11346f;
+    --brand: #927354;
     --brand-deep: #2a3526;
     --brand-tint: #f0ede8;
-    --ink: #221F1A;
-    --muted: #8A8272;
+    --ink: #302820;
+    --muted: #7A6A55;
     --border: #E4E0D8;
-    --bg: #FBF7F1;
+    --bg: #EDE5DA;
     --success: #2E9E5B;
     --success-tint: #E4F7EE;
-    --warn: #D98E2B;
+    --warn: #927354;
     --warn-tint: #FDF3DE;
     --danger: #C1440E;
     --danger-tint: #FCEBEB;
@@ -135,7 +135,7 @@
     .ap-table thead th {
         text-align: left;
         padding: 14px 20px;
-        background: #11346f !important;
+        background: #927354 !important;
         color: white !important;
         font-weight: 700;
         font-size: 0.68rem;
